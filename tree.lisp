@@ -26,7 +26,9 @@
 (defun base-name (p)
   (or (and (directory-pathname-p p)
 	   (car (last (pathname-directory p))))
-      (pathname-name p)))
+      (if (pathname-type p)
+	  (concatenate 'string (pathname-name p) "." (pathname-type p))
+	  (pathname-name p))))
 
 (defun walk-directory2 (dirname) 
   (labels

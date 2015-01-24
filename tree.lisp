@@ -37,9 +37,12 @@
 	 (when (directory-pathname-p name)
 	   (let ((new-prefixes (if prefixes
 				   (append `(,+line-straight+) prefixes)
-				   `(,+line-middle+))))
-	    (dolist (x (list-directory name))
-	      (walk x new-prefixes))))))
+				   `(,+line-middle+)))
+		 (children (list-directory name)))
+	     (when children
+	       (dolist (x (butlast children)) (walk x new-prefixes))
+	       (walk (car (last children))
+		     (append (butlast new-prefixes) `(,+line-end+))))))))
     (fresh-line)
     (walk (pathname-as-directory dirname) nil)))
 

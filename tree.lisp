@@ -28,7 +28,7 @@
 			(setf next-print 
 			      (or (and (directory-pathname-p x)
 				       (incf indent +indent+)
-				       x)
+				       (car (last (pathname-directory x))))
 				  (pathname-name x))))
 		    :directories t)
     (print-entry)))

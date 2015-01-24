@@ -32,7 +32,8 @@
   (labels
       ((walk (name prefixes)
 	 (dolist (prefix prefixes) (princ prefix))
-	 (princ (base-name name))
+	 (princ (if prefixes (base-name name)
+		    "."))
 	 (terpri)
 	 (when (directory-pathname-p name)
 	   (let ((new-prefixes (if prefixes

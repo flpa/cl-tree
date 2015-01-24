@@ -37,10 +37,9 @@
 (defun walk-directory2 (dirname) 
   (labels
       ((walk (name prefixes)
-	 (dolist (prefix prefixes) (princ prefix))
-	 (princ (if prefixes (base-name name)
-		    "."))
-	 (terpri)
+	 (format t "~{~a~}~a~%"
+		 prefixes
+		 (if prefixes (base-name name) "."))
 	 (when (directory-pathname-p name)
 	   (let ((new-prefixes (if prefixes
 				   (append `(,+line-straight+) prefixes)

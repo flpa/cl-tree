@@ -31,6 +31,9 @@
 	  (concatenate 'string (pathname-name p) "." (pathname-type p))
 	  (pathname-name p))))
 
+;; TODO: hidden handling
+;; TODO: the real thing sums directories and files handling
+
 (defun walk-directory2 (dirname) 
   (labels
       ((walk (name prefixes)

@@ -3,19 +3,32 @@
 ;; TODO: should be uppercased?
 (defparameter *show-hidden* nil)
 (defconstant +indent+ 4)
+(defconstant +line-middle+ "├── ")
+(defconstant +line-end+ "└── ")
 
 ; test needs general way of getting folder or filename: pathname-name only returns
 ; file names?
 
-(let ((indent (- 0 +indent+))) ;; TODO: hacky or good?
-  (walk-directory "/tmp/a"
-			 #'(lambda (x)
-			     (if (directory-pathname-p x)
-				 (progn
-				   (incf indent 4)
-				   (format t "~vTdas dir ~a~%" indent x))
-				 (format t "~vT├── ~a~%"
-					 indent
-					 (pathname-name x)
-					 )))
-			 :directories t))
+
+;; how to peek for correctly printing last
+
+;;missing file ext?
+
+;; push dirs on stack ? does that help?
+
+(let ((indent (- 0 +indent+));; TODO: hacky or good?
+      (next-print nil))      ;; next name to print 
+  (fresh-line)
+  (flet ((print-entry ()
+	   (when next-print (format t "~vT~a~a~%" indent
+				    +line-middle+ next-print))))
+    (walk-directory "/tmp/a"
+		    #'(lambda (x)
+			(print-entry)
+			(setf next-print 
+			      (or (and (directory-pathname-p x)
+				       (incf indent +indent+)
+				       x)
+				  (pathname-name x))))
+		    :directories t)
+    (print-entry)))

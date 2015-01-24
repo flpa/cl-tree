@@ -23,6 +23,7 @@
 (defconstant +line-straight+ "│   ")
 (defconstant +line-end+ "└── ")
 
+;; TODO ... why do I need to do this?
 (defun base-name (p)
   (or (and (directory-pathname-p p)
 	   (car (last (pathname-directory p))))

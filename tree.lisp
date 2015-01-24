@@ -42,13 +42,20 @@
 	   (let ((new-prefixes (if prefixes
 				   (append `(,+line-straight+) prefixes)
 				   `(,+line-middle+)))
-		 (children (list-directory name)))
+		 (children (list-sorted name)))
 	     (when children
 	       (dolist (x (butlast children)) (walk x new-prefixes))
 	       (walk (car (last children))
 		     (append (butlast new-prefixes) `(,+line-end+))))))))
     (fresh-line)
     (walk (pathname-as-directory dirname) nil)))
+
+;; TODO: by removing dots we blur the line between name and ending
+(defun list-sorted (dirname)
+  (sort (list-directory dirname) #'string< 
+	:key #'(lambda (x) 
+		 (remove-if #'(lambda(x) (char-equal #\. x))
+			    (base-name x)))))
 
 (walk-directory2 "/tmp/a")
 

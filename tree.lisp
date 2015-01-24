@@ -16,6 +16,11 @@
 
 ;; push dirs on stack ? does that help?
 
+(defun base-name (p)
+  (or (and (directory-pathname-p p)
+	   (car (last (pathname-directory p))))
+      (pathname-name p)))
+
 (let ((dir "/tmp/a") ;; will be param
       (isfirst t)
       (top-length nil))
@@ -32,8 +37,9 @@
 						   top-length
 						   (if (directory-pathname-p x) 1 0)))
 				    +line-middle+
-				    (or (and (directory-pathname-p x)
-					     (car (last (pathname-directory x))))
-					(pathname-name x))))))
-		    :directories t)
-    )
+				    (base-name x)))))
+		    :directories t
+		    :test #'(lambda (x) (or *show-hidden*
+					    (not (char-equal #\.
+							     (aref (base-name x) 0)))))
+    ))

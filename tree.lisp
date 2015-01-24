@@ -16,25 +16,24 @@
 
 ;; push dirs on stack ? does that help?
 
-(let ((indent (- 0 +indent+));; TODO: hacky or good?
-      (next-print nil)      ;; next name to print 
-      (dir "/tmp/a") ;; will be param
-      (isfirst t))
+(let ((dir "/tmp/a") ;; will be param
+      (isfirst t)
+      (top-length nil))
   (fresh-line)
-  (flet ((print-entry ()
-	   (when next-print (format t "~vT~a~a~%" indent
-				    +line-middle+ next-print))))
-    (walk-directory dir
-		    #'(lambda (x)
-			(if isfirst 
-			    (or (format t ".~%")
-				 (setf isfirst nil))
-			    (progn
-			      (print-entry)
-			      (setf next-print 
+  (walk-directory dir
+		  #'(lambda (x)
+		      (if isfirst 
+			  (or (format t " .~%")
+			      (setf isfirst nil)
+			      (setf top-length (length (pathname-directory x))))
+			  (progn
+			    (format t "~vT~a~a~%"
+				    (* +indent+ (- (length (pathname-directory x))
+						   top-length
+						   (if (directory-pathname-p x) 1 0)))
+				    +line-middle+
 				    (or (and (directory-pathname-p x)
-					     (incf indent +indent+)
 					     (car (last (pathname-directory x))))
 					(pathname-name x))))))
 		    :directories t)
-    (print-entry)))
+    )

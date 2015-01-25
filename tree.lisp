@@ -33,6 +33,10 @@
 
 ;; TODO: hidden handling
 
+;; cmdline options?
+;; http://www.cliki.net/unix-options
+;; http://www.cliki.net/getopt
+
 (defun walk-directory2 (dirname) 
   ;;   - root dir
   (let ((dircount -1) (filecount 0))

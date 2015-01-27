@@ -42,19 +42,20 @@
 		   prefixes
 		   (if prefixes (base-name name) "."))
 	   (if (directory-pathname-p name)
-	       (incf dircount)
-	       (incf filecount))
-	   (when (directory-pathname-p name)
-	     (let ((new-prefixes (if prefixes
-				     (append `(,*line-straight*) prefixes)
-				     `(,*line-middle*+)))
-		   (children (list-sorted name)))
-	       (when children
-		 (dolist (x (butlast children)) (walk x new-prefixes))
-		 (walk (car (last children))
-		       (append (butlast new-prefixes) `(,*line-end*))))))))
+	       (progn
+		 (incf dircount)
+		 (let ((new-prefixes (if prefixes
+					 (append `(,*line-straight*) prefixes)
+					 `(,*line-middle*+)))
+		       (children (list-sorted name)))
+		   (when children
+		     (dolist (x (butlast children)) (walk x new-prefixes))
+		     (walk (car (last children))
+			   (append (butlast new-prefixes) `(,*line-end*))))))
+	       (incf filecount))))
       (fresh-line)
       (walk (pathname-as-directory dirname) nil)
+      ;; TODO: singular/plural; might even add translations
       (format t "~%~a directories, ~a files" dircount filecount))))
 
 ;; TODO: by removing dots we blur the line between name and ending

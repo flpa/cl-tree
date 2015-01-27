@@ -74,7 +74,7 @@
 
 (walk-directory2 "/tmp/a")
 
-(defun is-hidden (pathname) 
+(defun hiddenp (pathname) 
   (not (char-equal #\.
 		   (aref (base-name pathname) 0))))
 

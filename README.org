@@ -7,7 +7,7 @@ Its main purpose right is to serve as a playground for experimenting with 'syste
 
 * Example output
 #+BEGIN_SRC 
-  .
+.
 ├── aha
 ├── b
 │   └── more

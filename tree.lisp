@@ -14,14 +14,10 @@
 
 (in-package :com.github.flpa.cl-tree)
 
-;; TODO: real tree sorts files alphabetically ignoring leading dots?
-
-;; TODO: should be uppercased?
 (defparameter *show-hidden* nil)
-(defconstant +indent+ 4)
-(defconstant +line-middle+ "├── ")
-(defconstant +line-straight+ "│   ")
-(defconstant +line-end+ "└── ")
+(defparameter *line-middle* "├── ")
+(defparameter *line-straight* "│   ")
+(defparameter *line-end* "└── ")
 
 ;; TODO ... why do I need to do this?
 (defun base-name (p)
@@ -50,13 +46,13 @@
 	       (incf filecount))
 	   (when (directory-pathname-p name)
 	     (let ((new-prefixes (if prefixes
-				     (append `(,+line-straight+) prefixes)
-				     `(,+line-middle+)))
+				     (append `(,*line-straight*) prefixes)
+				     `(,*line-middle*+)))
 		   (children (list-sorted name)))
 	       (when children
 		 (dolist (x (butlast children)) (walk x new-prefixes))
 		 (walk (car (last children))
-		       (append (butlast new-prefixes) `(,+line-end+))))))))
+		       (append (butlast new-prefixes) `(,*line-end*))))))))
       (fresh-line)
       (walk (pathname-as-directory dirname) nil)
       (format t "~%~a directories, ~a files" dircount filecount))))

@@ -37,3 +37,9 @@
   (assert-equal "" (remove-leading-dots "."))
   (assert-equal "" (remove-leading-dots ".."))
   )
+
+(define-test test-sort-with-hidden
+  (assert-equal `("a" "b" "c") (sort-with-hidden `("c" "a" "b")))
+  (assert-equal `("a" ".b" "c") (sort-with-hidden `("c" "a" ".b")))
+  (assert-equal `(".aha" "alpha" ".arm") (sort-with-hidden `("alpha" ".aha" ".arm")))
+  )

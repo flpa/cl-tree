@@ -49,7 +49,7 @@
 		 (let ((new-prefixes (if prefixes
 					 (append `(,*line-straight*) prefixes)
 					 `(,*line-middle*+)))
-		       (children (list-sorted name)))
+		       (children (sort-with-hidden (list-directory name))))
 		   (when children
 		     (dolist (x (butlast children)) (walk x new-prefixes))
 		     (walk (car (last children))
@@ -61,12 +61,10 @@
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))
 
-;; TODO: by removing dots we blur the line between name and ending
-(defun list-sorted (dirname)
-  (sort (list-directory dirname) #'string< 
-	:key #'(lambda (x) 
-		 (remove-if #'(lambda(x) (char-equal #\. x))
-			    (base-name x)))))
+(defun sort-with-hidden (files)
+  "Sorts a list of files, ignoring leading dots."
+  (sort files #'string< 
+	:key #'(lambda(x) (remove-leading-dots (base-name x)))))
 
 (walk-directory2 "/tmp/a")
 

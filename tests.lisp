@@ -43,3 +43,16 @@
   (assert-equal `("a" ".b" "c") (sort-with-hidden `("c" "a" ".b")))
   (assert-equal `(".aha" "alpha" ".arm") (sort-with-hidden `("alpha" ".aha" ".arm")))
   )
+
+(define-test test-filter-pathnames
+  (let ((numbers (loop for i from 0 to 5 collecting i)))
+    ;; one predicate
+    (assert-equal `(0 2 4) (filter-pathnames numbers (list #'evenp)))
+    ;; two predicates
+    (assert-equal `(2 4)
+		  (filter-pathnames numbers
+				    (list #'evenp
+					  #'(lambda (x) (> x 0)))))
+    ;; no predicates
+    (assert-equal `(0 1 2 3 4 5) (filter-pathnames numbers nil))
+    ))

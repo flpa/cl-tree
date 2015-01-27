@@ -61,6 +61,12 @@
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))
 
+;; TODO: actually rather generic?
+(defun filter-pathnames (pathnames predicates)
+  (remove-if-not #'(lambda (item)
+		     (every #'(lambda (p) (funcall p item)) predicates))
+		 pathnames))
+
 (defun sort-with-hidden (files)
   "Sorts a list of files, ignoring leading dots."
   (sort files #'string< 

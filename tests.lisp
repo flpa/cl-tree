@@ -27,3 +27,13 @@
   (assert-equal "file" (base-name #p"/home/has/folders/file"))
   (assert-equal "file.c" (base-name #p"/home/has/folders/file.c"))
   )
+
+(define-test test-remove-leading-dots
+  (assert-equal "plain" (remove-leading-dots "plain"))
+  (assert-equal "main.c" (remove-leading-dots "main.c"))
+  (assert-equal "hidden" (remove-leading-dots ".hidden"))
+  (assert-equal "hidden.asd" (remove-leading-dots ".hidden.asd"))
+  (assert-equal "" (remove-leading-dots ""))
+  (assert-equal "" (remove-leading-dots "."))
+  (assert-equal "" (remove-leading-dots ".."))
+  )

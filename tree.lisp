@@ -74,10 +74,9 @@
 
 (walk-directory2 "/tmp/a")
 
-(defun is-hidden (pathname)
-  (or *show-hidden*
-      (not (char-equal #\.
-		       (aref (base-name pathname) 0)))))
+(defun is-hidden (pathname) 
+  (not (char-equal #\.
+		   (aref (base-name pathname) 0))))
 
 ;; TODO: this is veery non-lispy... Also, there should be a library for this?
 (defun remove-leading-dots (input)

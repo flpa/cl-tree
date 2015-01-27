@@ -37,7 +37,9 @@
 
 (defun walk-directory2 (dirname) 
   ;;   - root dir
-  (let ((dircount -1) (filecount 0))
+  (let ((dircount -1) (filecount 0)
+	(predicates (if *show-hidden* nil
+			(list #'not-hidden-p))))
     (labels
 	((walk (name prefixes)
 	   (format t "~{~a~}~a~%"
@@ -49,7 +51,8 @@
 		 (let ((new-prefixes (if prefixes
 					 (append `(,*line-straight*) prefixes)
 					 `(,*line-middle*+)))
-		       (children (sort-with-hidden (list-directory name))))
+		       (children (sort-with-hidden
+				  (filter-pathnames (list-directory name) predicates))))
 		   (when children
 		     (dolist (x (butlast children)) (walk x new-prefixes))
 		     (walk (car (last children))
@@ -74,9 +77,9 @@
 
 (walk-directory2 "/tmp/a")
 
-(defun hiddenp (pathname) 
+(defun not-hidden-p (pathname)
   (not (char-equal #\.
-		   (aref (base-name pathname) 0))))
+	      (aref (base-name pathname) 0))))
 
 ;; TODO: this is veery non-lispy... Also, there should be a library for this?
 (defun remove-leading-dots (input)

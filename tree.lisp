@@ -14,10 +14,12 @@
 
 (in-package :com.github.flpa.cl-tree)
 
-(defparameter *show-hidden* nil)
 (defparameter *line-middle* "├── ")
 (defparameter *line-straight* "│   ")
 (defparameter *line-end* "└── ")
+
+(defparameter *show-hidden* nil)
+(defparameter *no-report* nil)
 
 ;; TODO ... why do I need to do this?
 (defun base-name (p)
@@ -55,8 +57,9 @@
 	       (incf filecount))))
       (fresh-line)
       (walk (pathname-as-directory dirname) nil)
-      ;; TODO: singular/plural; might even add translations
-      (format t "~%~a directories, ~a files" dircount filecount))))
+      (unless *no-report*
+	;; TODO: singular/plural; might even add translations
+	(format t "~%~a directories, ~a files" dircount filecount)))))
 
 ;; TODO: by removing dots we blur the line between name and ending
 (defun list-sorted (dirname)

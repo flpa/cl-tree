@@ -67,6 +67,8 @@
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))
 
+
+
 ;; TODO: actually rather generic?
 (defun filter-pathnames (pathnames predicates)
   (remove-if-not #'(lambda (item)
@@ -84,11 +86,5 @@
   (not (char-equal #\.
 	      (aref (base-name pathname) 0))))
 
-;; TODO: this is veery non-lispy... Also, there should be a library for this?
 (defun remove-leading-dots (input)
-  (loop with string = input
-     while (and (> (length string) 0)
-		(char-equal (aref string 0)
-			    #\.))
-     do (setf string (subseq string 1))
-     finally (return string)))
+  (string-left-trim (list #\.) input))

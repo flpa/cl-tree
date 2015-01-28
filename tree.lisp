@@ -62,7 +62,7 @@
 		 (incf dircount)
 		 (let ((new-prefixes (if prefixes
 					 (append `(,*line-straight*) prefixes)
-					 `(,*line-middle*+)))
+					 `(,*line-middle*)))
 		       (children (sort-with-hidden
 				  (filter-pathnames (list-directory name) predicates))))
 		   (when children
@@ -87,7 +87,8 @@
   (sort files #'string< 
 	:key #'(lambda(x) (remove-leading-dots (base-name x)))))
 
-(walk-directory2 "/tmp/a")
+(defun tree-tmpa ()
+  (walk-directory2 "/tmp/a"))
 
 (defun not-hidden-p (pathname)
   (not (char-equal #\.

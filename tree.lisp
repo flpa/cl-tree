@@ -37,12 +37,17 @@
 ;; http://www.cliki.net/unix-options
 ;; http://www.cliki.net/getopt
 
+;; TODO: functional or global vars?
+(defun build-predicates ()
+  (loop for x in `((,(not *show-hidden*) ,#'not-hidden-p)
+		   (,*directories-only* ,#'directory-pathname-p))
+       if (car x) collect (cadr x)))
+
 (defun walk-directory2 (dirname) 
   ;;   - root dir
   (let ((dircount -1)
 	(filecount 0)
-	(predicates (if *show-hidden* nil
-			(list #'not-hidden-p))))
+	(predicates (build-predicates)))
     (labels
 	((walk (name prefixes)
 	   (format t "~{~a~}~a~%"
@@ -66,8 +71,6 @@
       (unless *no-report*
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))
-
-
 
 ;; TODO: actually rather generic?
 (defun filter-pathnames (pathnames predicates)

@@ -15,11 +15,11 @@
 
 (in-package :asdf-user)
 
-(defsystem "cl-tree"
+(defsystem cl-tree
   :description "Common Lisp implementation of Unix 'tree' command."
   :version "0.0.1"
   :author "Florian Patzl"
-  :licence "Public Domain" ;; TODO: note GPL3
+  :licence "GPL3"
   :serial t
   :depends-on (:pathnames)
   :components ((:file "packages")
@@ -36,7 +36,7 @@
   :description "Test system for cl-tree"
   :version "0.0.1"
   :author "Florian Patzl"
-  :licence "Public Domain"
+  :licence "GPL3"
   :serial t
   :components ((:file "packages")
 	       (:file "tests")))

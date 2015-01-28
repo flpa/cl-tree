@@ -24,6 +24,8 @@
 (defparameter *no-report* nil)
 ;; -d
 (defparameter *directories-only* nil)
+;; --prune
+(defparameter *prune-empty* nil)
 
 ;; TODO ... why do I need to do this?
 (defun base-name (p)
@@ -38,9 +40,11 @@
 ;; http://www.cliki.net/getopt
 
 ;; TODO: functional or global vars?
+;; TODO: macro of better readability of parameter<>predicate mapping?
 (defun build-predicates ()
   (loop for x in `((,(not *show-hidden*) ,#'not-hidden-p)
-		   (,*directories-only* ,#'directory-pathname-p))
+		   (,*directories-only* ,#'directory-pathname-p)
+		   (,*prune-empty* ,#'file-or-non-empty-dir-p))
        if (car x) collect (cadr x)))
 
 (defun walk-directory2 (dirname) 
@@ -88,6 +92,11 @@
 (defun not-hidden-p (pathname)
   (not (char-equal #\.
 	      (aref (base-name pathname) 0))))
+
+(defun file-or-non-empty-dir-p (pathname)
+  (if (directory-pathname-p pathname)
+      (list-directory pathname)
+      t))
 
 (defun remove-leading-dots (input)
   (string-left-trim (list #\.) input))

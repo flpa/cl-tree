@@ -29,8 +29,6 @@
 	  (concatenate 'string (pathname-name p) "." (pathname-type p))
 	  (pathname-name p))))
 
-;; TODO: hidden handling
-
 ;; cmdline options?
 ;; http://www.cliki.net/unix-options
 ;; http://www.cliki.net/getopt

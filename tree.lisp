@@ -18,7 +18,9 @@
 (defparameter *line-straight* "│   ")
 (defparameter *line-end* "└── ")
 
+;; --noreport
 (defparameter *show-hidden* nil)
+;; -a
 (defparameter *no-report* nil)
 
 ;; TODO ... why do I need to do this?

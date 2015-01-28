@@ -22,6 +22,8 @@
 (defparameter *show-hidden* nil)
 ;; -a
 (defparameter *no-report* nil)
+;; -d
+(defparameter *directories-only* nil)
 
 ;; TODO ... why do I need to do this?
 (defun base-name (p)
@@ -37,7 +39,8 @@
 
 (defun walk-directory2 (dirname) 
   ;;   - root dir
-  (let ((dircount -1) (filecount 0)
+  (let ((dircount -1)
+	(filecount 0)
 	(predicates (if *show-hidden* nil
 			(list #'not-hidden-p))))
     (labels

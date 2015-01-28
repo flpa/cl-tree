@@ -18,5 +18,11 @@
 (defpackage :com.github.flpa.cl-tree
   (:use :common-lisp
 	:com.gigamonkeys.pathnames)
-  (:export :tree-tmpa)
+  (:export :tree-tmpa
+	   :base-name
+	   :remove-leading-dots
+	   :sort-with-hidden
+	   :filter-pathnames
+	   )
   )
+

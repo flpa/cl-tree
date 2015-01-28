@@ -17,4 +17,7 @@
 ;; build an executable (51MB):
 
 (require 'asdf)
-(asdf:operate 'asdf:program-op :cl-tree) 
+(asdf:operate 'asdf:program-op :cl-tree)
+
+;; run tests
+(asdf:operate 'asdf:test-op cl-tree/test)

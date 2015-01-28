@@ -19,7 +19,7 @@
   :description "Common Lisp implementation of Unix 'tree' command."
   :version "0.0.1"
   :author "Florian Patzl"
-  :licence "Public Domain"
+  :licence "Public Domain" ;; TODO: note GPL3
   :serial t
   :depends-on (:pathnames)
   :components ((:file "packages")
@@ -27,15 +27,16 @@
   :entry-point "com.github.flpa.cl-tree:tree-tmpa")
 
 
-;; draft from asdf docu: defining test package to
-;;
-;; (defsystem foo/test
-;;   :depends-on (foo fiveam) ; fiveam is a test framework library
-;;   :perform (test-op (o s)
-;;                     (uiop:symbol-call :fiveam  '#:run!
-;;                        (uiop:find-symbol* '#:foo-test-suite
-;;                                             :foo-tests)))
-;;   ...)
-
-
-	       
+(defsystem cl-tree/test
+  :depends-on (cl-tree fiveam)
+  :perform (test-op (o s)
+                    (uiop:symbol-call :fiveam  '#:run!
+                       (uiop:find-symbol* '#:all
+					  '#:com.github.flpa.cl-tree.test)))
+  :description "Test system for cl-tree"
+  :version "0.0.1"
+  :author "Florian Patzl"
+  :licence "Public Domain"
+  :serial t
+  :components ((:file "packages")
+	       (:file "tests")))

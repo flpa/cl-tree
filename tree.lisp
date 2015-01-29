@@ -101,7 +101,7 @@
 
 (defun sort-with-hidden (pathnames)
   "Sorts a list of PATHNAMES, ignoring leading dots."
-  (sort files #'string< 
+  (sort pathnames #'string< 
 	:key #'(lambda(x) (remove-leading-dots (base-name x)))))
 
 (defun remove-leading-dots (input)

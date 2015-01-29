@@ -22,8 +22,7 @@
   :licence "GPL3"
   :serial t
   :depends-on (:pathnames)
-  :components ((:file "packages")
-	       (:file "tree"))
+  :components ((:file "tree"))
   :entry-point "com.github.flpa.cl-tree:tree-tmpa")
 
 
@@ -38,5 +37,4 @@
   :author "Florian Patzl"
   :licence "GPL3"
   :serial t
-  :components ((:file "packages")
-	       (:file "tests")))
+  :components ((:file "tests")))

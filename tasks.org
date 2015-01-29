@@ -13,3 +13,4 @@
 *** Libs?
     http://www.cliki.net/unix-options
     http://www.cliki.net/getopt
+** Google CL guide says UIOP simplifies pathname handling?

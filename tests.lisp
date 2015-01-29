@@ -13,14 +13,13 @@
 ;; along with this program. If not, see <http://www.gnu.org/licenses/>.
 ;; -----------------------------------------------------------------------------
 
+(in-package :cl-user)
 (defpackage :com.github.flpa.cl-tree.test
   (:use :common-lisp
 	:com.github.flpa.cl-tree
-	:5am)
-  )
+	:5am))
 
 (in-package :com.github.flpa.cl-tree.test)
-
 
 ;; TODO: well that escalated quickly... lots of boilerplate code.
 ;;       Revert to 1 test per method? Simplify by using macros?

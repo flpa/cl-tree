@@ -40,9 +40,9 @@
 ;; --prune
 (defparameter *prune-empty* nil)
 
-;; ---------------
-;; Public API
-;; ---------------
+;;; ---------------
+;;; Public API
+;;; ---------------
 
 (defun tree-tmpa ()
   (walk-directory2 "/tmp/a"))
@@ -76,9 +76,9 @@
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))
 
-;; ---------------
-;; Internals
-;; ---------------
+;;; ---------------
+;;; Internals
+;;; ---------------
 
 ;; TODO: functional or global vars?
 ;; TODO: macro of better readability of parameter<>predicate mapping?
@@ -102,17 +102,17 @@
 		     (every #'(lambda (p) (funcall p item)) predicates))
 		 pathnames))
 
-(defun sort-with-hidden (files)
-  "Sorts a list of files, ignoring leading dots."
+(defun sort-with-hidden (pathnames)
+  "Sorts a list of PATHNAMES, ignoring leading dots."
   (sort files #'string< 
 	:key #'(lambda(x) (remove-leading-dots (base-name x)))))
 
 (defun remove-leading-dots (input)
   (string-left-trim (list #\.) input))
 
-;; ---------------
-;; Predicates
-;; ---------------
+;;; ---------------
+;;; Predicates
+;;; ---------------
 
 (defun not-hidden-p (pathname)
   (not (char-equal #\.

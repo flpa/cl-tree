@@ -14,7 +14,6 @@
 ;; -----------------------------------------------------------------------------
 
 (in-package :cl-user)
-
 (defpackage :com.github.flpa.cl-tree
   (:use :common-lisp
 	:com.gigamonkeys.pathnames)
@@ -71,7 +70,7 @@
 			   (append (butlast new-prefixes) `(,*line-end*))))))
 	       (incf filecount))))
       (fresh-line)
-      (walk (pathname-as-directory dirname) nil)
+      (walk (pathname-as-directory dirname) `())
       (unless *no-report*
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))

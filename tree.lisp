@@ -43,6 +43,7 @@
 ;;;; ---------------
 
 (defun tree-tmpa ()
+  (princ (uiop/image:command-line-arguments))
   (walk-directory2 "/tmp/a"))
 
 (defun walk-directory2 (dirname) 

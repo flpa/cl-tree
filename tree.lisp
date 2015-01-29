@@ -13,6 +13,18 @@
 ;; along with this program. If not, see <http://www.gnu.org/licenses/>.
 ;; -----------------------------------------------------------------------------
 
+(in-package :cl-user)
+
+(defpackage :com.github.flpa.cl-tree
+  (:use :common-lisp
+	:com.gigamonkeys.pathnames)
+  (:export :tree-tmpa
+	   :base-name
+	   :remove-leading-dots
+	   :sort-with-hidden
+	   :filter-pathnames
+	   ))
+
 (in-package :com.github.flpa.cl-tree)
 
 (defparameter *line-middle* "├── ")

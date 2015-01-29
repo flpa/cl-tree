@@ -7,3 +7,9 @@
       | -I pattern    | Do not list those files that match the wild-card pattern.                                                                                                                                                                                                                                                                                                                                                                                                                              |
       | --filelimit # | Do not descend directories that contain more than # entries.                                                                                                                                                                                                                                                                                                                                                                                                                           |
       | -o filename   | Send output to filename.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+
+* Topics
+** Cmdline invocation
+*** Libs?
+    http://www.cliki.net/unix-options
+    http://www.cliki.net/getopt

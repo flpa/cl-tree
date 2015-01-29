@@ -28,25 +28,12 @@
 ;; --prune
 (defparameter *prune-empty* nil)
 
-;; TODO ... why do I need to do this?
-(defun base-name (p)
-  (or (and (directory-pathname-p p)
-	   (car (last (pathname-directory p))))
-      (if (pathname-type p)
-	  (concatenate 'string (pathname-name p) "." (pathname-type p))
-	  (pathname-name p))))
+;; ---------------
+;; Public API
+;; ---------------
 
-;; cmdline options?
-;; http://www.cliki.net/unix-options
-;; http://www.cliki.net/getopt
-
-;; TODO: functional or global vars?
-;; TODO: macro of better readability of parameter<>predicate mapping?
-(defun build-predicates ()
-  (loop for x in `((,(not *show-hidden*) ,#'not-hidden-p)
-		   (,*directories-only* ,#'directory-pathname-p)
-		   (,*prune-empty* ,#'file-or-non-empty-dir-p))
-       if (car x) collect (cadr x)))
+(defun tree-tmpa ()
+  (walk-directory2 "/tmp/a"))
 
 (defun walk-directory2 (dirname) 
   ;;   - root dir
@@ -77,6 +64,26 @@
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))
 
+;; ---------------
+;; Internals
+;; ---------------
+
+;; TODO: functional or global vars?
+;; TODO: macro of better readability of parameter<>predicate mapping?
+(defun build-predicates ()
+  (loop for x in `((,(not *show-hidden*) ,#'not-hidden-p)
+		   (,*directories-only* ,#'directory-pathname-p)
+		   (,*prune-empty* ,#'file-or-non-empty-dir-p))
+       if (car x) collect (cadr x)))
+
+;; TODO ... why do I need to do this?
+(defun base-name (p)
+  (or (and (directory-pathname-p p)
+	   (car (last (pathname-directory p))))
+      (if (pathname-type p)
+	  (concatenate 'string (pathname-name p) "." (pathname-type p))
+	  (pathname-name p))))
+
 ;; TODO: actually rather generic?
 (defun filter-pathnames (pathnames predicates)
   (remove-if-not #'(lambda (item)
@@ -88,8 +95,12 @@
   (sort files #'string< 
 	:key #'(lambda(x) (remove-leading-dots (base-name x)))))
 
-(defun tree-tmpa ()
-  (walk-directory2 "/tmp/a"))
+(defun remove-leading-dots (input)
+  (string-left-trim (list #\.) input))
+
+;; ---------------
+;; Predicates
+;; ---------------
 
 (defun not-hidden-p (pathname)
   (not (char-equal #\.
@@ -99,6 +110,3 @@
   (if (directory-pathname-p pathname)
       (list-directory pathname)
       t))
-
-(defun remove-leading-dots (input)
-  (string-left-trim (list #\.) input))

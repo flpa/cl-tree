@@ -20,4 +20,4 @@
 (asdf:operate 'asdf:program-op :cl-tree)
 
 ;; run tests
-(asdf:operate 'asdf:test-op cl-tree/test)
+;;(asdf:operate 'asdf:test-op cl-tree/test)

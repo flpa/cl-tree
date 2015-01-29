@@ -21,8 +21,7 @@
 	   :base-name
 	   :remove-leading-dots
 	   :sort-with-hidden
-	   :filter-pathnames
-	   ))
+	   :filter-pathnames))
 
 (in-package :com.github.flpa.cl-tree)
 
@@ -39,16 +38,15 @@
 ;; --prune
 (defparameter *prune-empty* nil)
 
-;;; ---------------
-;;; Public API
-;;; ---------------
+;;;; ---------------
+;;;; Public API
+;;;; ---------------
 
 (defun tree-tmpa ()
   (walk-directory2 "/tmp/a"))
 
 (defun walk-directory2 (dirname) 
-  ;;   - root dir
-  (let ((dircount -1)
+  (let ((dircount -1) ; -1 to exclude root directory from count.
 	(filecount 0)
 	(predicates (build-predicates)))
     (labels
@@ -75,9 +73,9 @@
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))
 
-;;; ---------------
-;;; Internals
-;;; ---------------
+;;;; ---------------
+;;;; Internals
+;;;; ---------------
 
 ;; TODO: functional or global vars?
 ;; TODO: macro of better readability of parameter<>predicate mapping?
@@ -85,7 +83,7 @@
   (loop for x in `((,(not *show-hidden*) ,#'not-hidden-p)
 		   (,*directories-only* ,#'directory-pathname-p)
 		   (,*prune-empty* ,#'file-or-non-empty-dir-p))
-       if (car x) collect (cadr x)))
+     if (car x) collect (cadr x)))
 
 ;; TODO ... why do I need to do this?
 (defun base-name (p)
@@ -109,13 +107,13 @@
 (defun remove-leading-dots (input)
   (string-left-trim (list #\.) input))
 
-;;; ---------------
-;;; Predicates
-;;; ---------------
+;;;; ---------------
+;;;; Predicates
+;;;; ---------------
 
 (defun not-hidden-p (pathname)
   (not (char-equal #\.
-	      (aref (base-name pathname) 0))))
+		   (aref (base-name pathname) 0))))
 
 (defun file-or-non-empty-dir-p (pathname)
   (if (directory-pathname-p pathname)

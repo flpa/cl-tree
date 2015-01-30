@@ -13,28 +13,16 @@
 ;; along with this program. If not, see <http://www.gnu.org/licenses/>.
 ;; -----------------------------------------------------------------------------
 
-(in-package :asdf-user)
+(in-package :cl-user)
+(defpackage :com.github.flpa.cl-tree.cmdline
+  (:use :common-lisp
+	:com.github.flpa.cl-tree)
+  (:export :tree-cmd))
 
-(defsystem cl-tree
-  :description "Common Lisp implementation of Unix 'tree' command."
-  :version "0.0.2"
-  :author "Florian Patzl"
-  :licence "GPL3"
-  :serial t
-  :depends-on (:pathnames)
-  :components ((:file "tree")
-	       (:file "cmdline"))
-  :entry-point "com.github.flpa.cl-tree.cmdline:tree-cmd")
+(in-package :com.github.flpa.cl-tree.cmdline)
 
-(defsystem cl-tree/test
-  :depends-on (cl-tree fiveam)
-  :perform (test-op (o s)
-                    (uiop:symbol-call :fiveam  '#:run!
-                       (uiop:find-symbol* '#:all
-					  '#:com.github.flpa.cl-tree.test)))
-  :description "Test system for cl-tree"
-  :version "0.0.2"
-  :author "Florian Patzl"
-  :licence "GPL3"
-  :serial t
-  :components ((:file "tests")))
+(defun tree-cmd ()
+  (princ (uiop/image:command-line-arguments))
+  (tree (uiop/os:getcwd)))
+
+;:TODO: parse arguments

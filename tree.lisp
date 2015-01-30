@@ -42,11 +42,7 @@
 ;;;; Public API
 ;;;; ---------------
 
-(defun tree ()
-  (princ (uiop/image:command-line-arguments))
-  (walk-directory2 (uiop/os:getcwd)))
-
-(defun walk-directory2 (dir) 
+(defun tree (dir) 
   (let ((dircount -1) ; -1 to exclude root directory from count.
 	(filecount 0)
 	(predicates (build-predicates)))

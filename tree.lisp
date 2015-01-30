@@ -35,10 +35,11 @@
 ;;;; Public API
 ;;;; ---------------
 
-(defun tree (dir &key (noreport nil)
+(defun tree (root-dir &key (noreport nil)
 		   (show-hidden nil)
 		   (directories-only nil)
-		   (prune-empty nil))
+		   (prune-empty nil)
+		   (dirs '()))
   (let ((dircount -1) ; -1 to exclude root directory from count.
 	(filecount 0)
 	(predicates (build-predicates show-hidden
@@ -63,7 +64,8 @@
 			   (append (butlast new-prefixes) `(,*line-end*))))))
 	       (incf filecount))))
       (fresh-line)
-      (walk dir '())
+      ;; walk dirs, if no dirs use root-dir
+      (walk root-dir '())
       (unless noreport
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))
@@ -72,7 +74,6 @@
 ;;;; Internals
 ;;;; ---------------
 
-;; TODO: functional or global vars?
 ;; TODO: macro of better readability of parameter<>predicate mapping?
 (defun build-predicates (show-hidden directories-only prune-empty)
   (loop for x in `((,(not show-hidden) ,#'not-hidden-p)

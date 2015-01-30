@@ -23,11 +23,11 @@
 (in-package :com.github.flpa.cl-tree.cmdline)
 
 (defun tree-cmd ()
-  (princ (uiop/image:command-line-arguments))
   (with-cli-options () (a
 			d
 			noreport
-			prune)
+			prune
+			&free directories)
     (tree (uiop/os:getcwd)
 	  :show-hidden a
 	  :directories-only d

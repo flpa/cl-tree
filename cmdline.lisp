@@ -16,13 +16,20 @@
 (in-package :cl-user)
 (defpackage :com.github.flpa.cl-tree.cmdline
   (:use :common-lisp
-	:com.github.flpa.cl-tree)
+	:com.github.flpa.cl-tree
+	:unix-options)
   (:export :tree-cmd))
 
 (in-package :com.github.flpa.cl-tree.cmdline)
 
 (defun tree-cmd ()
   (princ (uiop/image:command-line-arguments))
-  (tree (uiop/os:getcwd)))
-
-;:TODO: parse arguments
+  (with-cli-options () (a
+			d
+			noreport
+			prune)
+    (tree (uiop/os:getcwd)
+	  :show-hidden a
+	  :directories-only d
+	  :noreport noreport
+	  :prune-empty prune)))

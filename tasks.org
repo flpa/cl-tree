@@ -9,9 +9,7 @@
       | -o filename   | Send output to filename.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
 * Topics
-** Cmdline invocation
-*** Libs?
-    http://www.cliki.net/unix-options
-    http://www.cliki.net/getopt
 ** Google CL guide says UIOP simplifies pathname handling?
 ** use import-from instead of :use
+** explicit dir: tree a prints a, tree . prints ., tree ../xy prints ../xy as root and so on
+** License clashes with other libs?

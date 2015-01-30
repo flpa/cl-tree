@@ -21,7 +21,7 @@
   :author "Florian Patzl"
   :licence "GPL3"
   :serial t
-  :depends-on (:pathnames)
+  :depends-on (pathnames unix-options)
   :components ((:file "tree")
 	       (:file "cmdline"))
   :entry-point "com.github.flpa.cl-tree.cmdline:tree-cmd")

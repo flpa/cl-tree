@@ -31,23 +31,19 @@
 (defparameter *line-straight* "│   ")
 (defparameter *line-end* "└── ")
 
-;; --noreport
-(defparameter *show-hidden* nil)
-;; -a
-(defparameter *no-report* nil)
-;; -d
-(defparameter *directories-only* nil)
-;; --prune
-(defparameter *prune-empty* nil)
-
 ;;;; ---------------
 ;;;; Public API
 ;;;; ---------------
 
-(defun tree (dir) 
+(defun tree (dir &key (noreport nil)
+		   (show-hidden nil)
+		   (directories-only nil)
+		   (prune-empty nil))
   (let ((dircount -1) ; -1 to exclude root directory from count.
 	(filecount 0)
-	(predicates (build-predicates)))
+	(predicates (build-predicates show-hidden
+				      directories-only
+				      prune-empty)))
     (labels
 	((walk (name prefixes)
 	   (format t "~{~a~}~a~%"
@@ -68,7 +64,7 @@
 	       (incf filecount))))
       (fresh-line)
       (walk dir '())
-      (unless *no-report*
+      (unless noreport
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))
 
@@ -78,10 +74,10 @@
 
 ;; TODO: functional or global vars?
 ;; TODO: macro of better readability of parameter<>predicate mapping?
-(defun build-predicates ()
-  (loop for x in `((,(not *show-hidden*) ,#'not-hidden-p)
-		   (,*directories-only* ,#'directory-pathname-p)
-		   (,*prune-empty* ,#'file-or-non-empty-dir-p))
+(defun build-predicates (show-hidden directories-only prune-empty)
+  (loop for x in `((,(not show-hidden) ,#'not-hidden-p)
+		   (,directories-only ,#'directory-pathname-p)
+		   (,prune-empty ,#'file-or-non-empty-dir-p))
      if (car x) collect (cadr x)))
 
 ;; TODO ... why do I need to do this?

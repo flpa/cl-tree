@@ -23,8 +23,7 @@
   :serial t
   :depends-on (:pathnames)
   :components ((:file "tree"))
-  :entry-point "com.github.flpa.cl-tree:tree-tmpa")
-
+  :entry-point "com.github.flpa.cl-tree:tree")
 
 (defsystem cl-tree/test
   :depends-on (cl-tree fiveam)

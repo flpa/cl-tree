@@ -17,7 +17,7 @@
 (defpackage :com.github.flpa.cl-tree
   (:use :common-lisp
 	:com.gigamonkeys.pathnames)
-  (:export :tree-tmpa
+  (:export :tree
 	   :base-name
 	   :remove-leading-dots
 	   :sort-with-hidden
@@ -44,9 +44,12 @@
 
 (defun tree-tmpa ()
   (princ (uiop/image:command-line-arguments))
-  (walk-directory2 "/tmp/a"))
+  (walk-directory2 (pathname-as-directory "/tmp/a")))
 
-(defun walk-directory2 (dirname) 
+(defun tree ()
+  (walk-directory2 (uiop/os:getcwd)))
+
+(defun walk-directory2 (dir) 
   (let ((dircount -1) ; -1 to exclude root directory from count.
 	(filecount 0)
 	(predicates (build-predicates)))
@@ -69,7 +72,7 @@
 			   (append (butlast new-prefixes) `(,*line-end*))))))
 	       (incf filecount))))
       (fresh-line)
-      (walk (pathname-as-directory dirname) `())
+      (walk dir `())
       (unless *no-report*
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))

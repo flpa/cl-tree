@@ -36,10 +36,10 @@
 ;;;; ---------------
 
 (defun tree (root-dir &key (noreport nil)
-		   (show-hidden nil)
-		   (directories-only nil)
-		   (prune-empty nil)
-		   (dirs '()))
+			(show-hidden nil)
+			(directories-only nil)
+			(prune-empty nil)
+			(dirs '()))
   (let ((dircount -1) ; -1 to exclude root directory from count.
 	(filecount 0)
 	(predicates (build-predicates show-hidden
@@ -67,8 +67,8 @@
       ;; walk dirs, if no dirs use root-dir
       (walk root-dir '())
       (unless noreport
-	;; TODO: singular/plural; might even add translations
-	(format t "~%~a directories, ~a files" dircount filecount)))))
+	(print-report dircount filecount))
+      (fresh-line))))
 
 ;;;; ---------------
 ;;;; Internals
@@ -102,6 +102,12 @@
 
 (defun remove-leading-dots (input)
   (string-left-trim (list #\.) input))
+
+(defun print-report (dircount filecount)
+  "Prints the number of directories and files, also taking taking care of pluralization.
+  e.g.: '5 directories, 1 file'.
+  Output is preceded by a blank line."
+  (format t "~&~%~a director~:@P, ~a file~:P" dircount filecount))
 
 ;;;; ---------------
 ;;;; Predicates

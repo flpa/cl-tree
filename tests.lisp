@@ -105,3 +105,27 @@
 				     #'(lambda (x) (> x 0)))))))
 (test no-predicates
   (is (equal *numbers* (filter-pathnames *numbers* nil))))
+
+(def-suite test-print-report :in all)
+(in-suite test-print-report)
+
+(test 3dirs-2files
+	 (is (equal
+	      (with-output-to-string (*standard-output*)
+		(com.github.flpa.cl-tree::print-report 3 2))
+	      "
+3 directories, 2 files")))
+
+(test 1dir-1file
+	 (is (equal
+	      (with-output-to-string (*standard-output*)
+		(com.github.flpa.cl-tree::print-report 1 1))
+	      "
+1 directory, 1 file")))
+
+(test 0dirs-0files
+	 (is (equal
+	      (with-output-to-string (*standard-output*)
+		(com.github.flpa.cl-tree::print-report 0 0))
+	      "
+0 directories, 0 files")))

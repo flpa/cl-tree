@@ -42,11 +42,8 @@
 ;;;; Public API
 ;;;; ---------------
 
-(defun tree-tmpa ()
-  (princ (uiop/image:command-line-arguments))
-  (walk-directory2 (pathname-as-directory "/tmp/a")))
-
 (defun tree ()
+  (princ (uiop/image:command-line-arguments))
   (walk-directory2 (uiop/os:getcwd)))
 
 (defun walk-directory2 (dir) 
@@ -72,7 +69,7 @@
 			   (append (butlast new-prefixes) `(,*line-end*))))))
 	       (incf filecount))))
       (fresh-line)
-      (walk dir `())
+      (walk dir '())
       (unless *no-report*
 	;; TODO: singular/plural; might even add translations
 	(format t "~%~a directories, ~a files" dircount filecount)))))

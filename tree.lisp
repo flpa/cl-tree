@@ -15,8 +15,10 @@
 
 (in-package :cl-user)
 (defpackage :com.github.flpa.cl-tree
-  (:use :common-lisp
-	:com.gigamonkeys.pathnames)
+  (:use :common-lisp)
+  (:import-from :com.gigamonkeys.pathnames
+		:directory-pathname-p
+		:list-directory)
   (:export :tree
 	   :base-name
 	   :remove-leading-dots

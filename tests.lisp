@@ -21,111 +21,87 @@
 
 (in-package :com.github.flpa.cl-tree.test)
 
-;; TODO: well that escalated quickly... lots of boilerplate code.
-;;       Revert to 1 test per method? Simplify by using macros?
+;;; Some words about the tests:
+;;; I'm following the rule of only checking one case per test. This has the benefit that each check
+;;; has a description: the test name. Failing tests immediately communicate which aspect of the
+;;; method under test is broken. Because of this approach and the fact that most of the tests are
+;;; single-line method invocations checking whether input results in the expected output, lots of
+;;; boilerplate test code was necessary. Right now, this problem has been tackled by introducing
+;;; the pattern of defining local macros, which provide test code templates, for each set of
+;;; similar tests.
+;;; I am confident that this solution will not appeal to everyone, maybe not even to me when
+;;; revisiting the file in a couple of weeks. For now, I consider the benefit of reduced boilerplate
+;;; code to outweigh the complexity added by macros.
+;;;
+;;; TODO: I could go one step further by writing a macro that handles
+;;;         - suite creation
+;;;         - test creation
+;;;       , only receiving method under test, test fn prototype and tuples of desc, in, out?
+;;;       That would rather be an extension of 5am, though.
 
 (def-suite all)
-
 (def-suite test-base-name :in all)
 (in-suite test-base-name)
 
-;; (defmacro basename-test (name in exp)
-;;   `(test ,name
-;;     (is (string-equal (base-name (pathname ,in)) ,exp))))
-
-(test single-dir
-  (is (string-equal "home" (base-name #p"/home/"))))
-
-(test two-dirs
-  (is (string-equal "dir" (base-name #p"/home/dir/"))))
-
-(test many-dirs
-  (is (string-equal "dir" (base-name #p"/home/is/great/and/a/dir/"))))
-
-(test simple-file
-  (is (string-equal "file" (base-name #p"/home/file"))))
-
-(test nested-file
-  (is (string-equal "file" (base-name #p"/home/has/folders/file"))))
-
-(test file-with-ext
-  (is (string-equal "file.c" (base-name #p"/home/has/folders/file.c"))))
-
+(macrolet ((fn (desc in out)
+	     `(test ,desc
+		(is (equal (base-name (pathname ,in)) ,out)))))
+  (fn single-dir "/home/" "home")
+  (fn two-dirs "/home/dir/" "dir")
+  (fn many-dirs "/home/is/great/and/a/dir/" "dir")
+  (fn simple-file "/home/file" "file")
+  (fn nested-file "/home/has/folders/file" "file")
+  (fn file-with-ext "/home/file.c" "file.c"))
 
 (def-suite test-remove-leading-dots :in all)
 (in-suite test-remove-leading-dots)
 
-(test no-ext
-  (is (string-equal "plain" (remove-leading-dots "plain"))))
-
-(test ext
-  (is (string-equal "main.c" (remove-leading-dots "main.c"))))
-
-(test hidden-no-ext
-  (is (string-equal "hidden" (remove-leading-dots ".hidden"))))
-
-(test hidden-ext
-  (is (string-equal "hidden.asd" (remove-leading-dots ".hidden.asd"))))
-
-(test empty
-  (is (string-equal "" (remove-leading-dots ""))))
-
-(test dot
-  (is (string-equal "" (remove-leading-dots "."))))
-
-(test two-dots
-  (is (string-equal "" (remove-leading-dots ".."))))
-
+(macrolet ((fn (desc in out)
+	     `(test ,desc
+		(is (equal (remove-leading-dots ,in) ,out)))))
+  (fn no-ext "plain" "plain")
+  (fn with-ext "main.c" "main.c")
+  (fn hidden-no-ext ".hidden" "hidden")
+  (fn hidden-with-ext ".hidden.asd" "hidden.asd")
+  (fn empty "" "")
+  (fn dot "." "")
+  (fn two-dots ".." ""))
 
 (def-suite test-sort-with-hidden :in all)
 (in-suite test-sort-with-hidden)
 
-(test no-hidden
-  (equal `("a" "b" "c") (sort-with-hidden `("c" "a" "b"))))
-
-(test hidden
-  (equal `("a" ".b" "c") (sort-with-hidden `("c" "a" ".b"))))
-
-(test multiple-hidden
-  (equal `(".aha" "alpha" ".arm") (sort-with-hidden `("alpha" ".aha" ".arm"))))
-
+(macrolet ((fn (desc in out)
+	     `(test ,desc
+		(is (equal ,out (sort-with-hidden ,in))))))
+  (fn no-hidden '("c" "a" "b") '("a" "b" "c"))
+  (fn single-hidden '("c" "a" ".b") '("a" ".b" "c"))
+  (fn multiple-hidden '("alpha" ".aha" ".arm") '(".aha" "alpha" ".arm")))
 
 (def-suite test-filter-pathnames :in all)
 (in-suite test-filter-pathnames)
 
-(defparameter *numbers* (loop for i from 0 to 5 collect i)) 
+;; TODO: Could this global parameter cause problems? I couldn't get a 'let'-block surrounding
+;;       all of his working, maybe that'd need 'eval-when'?
+(defparameter *numbers-0to5* (loop for i from 0 to 5 collect i))
 
-(test one-predicate	
-  (is (equal '(0 2 4) (filter-pathnames *numbers* (list #'evenp)))))
-
-(test two-predicates
-  (is (equal '(2 4)
-	     (filter-pathnames *numbers*
-			       (list #'evenp
-				     #'(lambda (x) (> x 0)))))))
-(test no-predicates
-  (is (equal *numbers* (filter-pathnames *numbers* nil))))
+(macrolet ((fn (desc predicates out)
+	     `(test ,desc
+		(is (equal ,out (filter-pathnames *numbers-0to5* ,predicates))))))
+  (fn filter-even (list #'evenp) '(0 2 4))
+  (fn filter-even-greater-zero (list #'evenp #'(lambda (x) (> x 0))) '(2 4))
+  (fn no-predicates '() *numbers-0to5*))
 
 (def-suite test-print-report :in all)
 (in-suite test-print-report)
 
-(test 3dirs-2files
-	 (is (equal
-	      (with-output-to-string (*standard-output*)
-		(com.github.flpa.cl-tree::print-report 3 2))
-	      "
-3 directories, 2 files")))
-
-(test 1dir-1file
-	 (is (equal
-	      (with-output-to-string (*standard-output*)
-		(com.github.flpa.cl-tree::print-report 1 1))
-	      "
-1 directory, 1 file")))
-
-(test 0dirs-0files
-	 (is (equal
-	      (with-output-to-string (*standard-output*)
-		(com.github.flpa.cl-tree::print-report 0 0))
-	      "
-0 directories, 0 files")))
+(macrolet ((fn (desc dircount filecount out)
+	     `(test ,desc
+		(is (equal ,out
+			   (with-output-to-string (*standard-output*)
+			     (com.github.flpa.cl-tree::print-report ,dircount ,filecount)))))))
+  (fn 3dirs-2files 3 2 "
+3 directories, 2 files")
+  (fn 1dir-1file 1 1 "
+1 directory, 1 file")
+  (fn 0dirs-0files 0 0 "
+0 directories, 0 files"))

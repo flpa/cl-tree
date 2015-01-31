@@ -28,3 +28,10 @@ cl-tree is licensed under GPLv3.
 
 
 
+* Glossary
+** Abbreviations
+   Abbreviations commonly found in source files.
+   | Term | Meaning                   |
+   |------+---------------------------|
+   | dir  | directory                 |
+   | ext  | extension (file extesion) |

@@ -17,7 +17,9 @@
 (defpackage :com.github.flpa.cl-tree.test
   (:use :common-lisp
 	:com.github.flpa.cl-tree
-	:5am))
+	:5am)
+  (:import-from :com.github.flpa.cl-tree
+		::visible-p))
 
 (in-package :com.github.flpa.cl-tree.test)
 
@@ -105,3 +107,16 @@
 1 directory, 1 file")
   (fn 0dirs-0files 0 0 "
 0 directories, 0 files"))
+
+(def-suite test-visible-p :in all)
+(in-suite test-visible-p)
+
+(test visible-file
+  (is-true (visible-p #P"/tmp/main.c")))
+(test hidden-file
+  (is-false (visible-p #P"/tmp/.config")))
+(test visible-directory
+  (is-true (visible-p #P"/tmp/")))
+(test hidden-directory
+  (is-false (visible-p #P"/tmp/.git/")))
+

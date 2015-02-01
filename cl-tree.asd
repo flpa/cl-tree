@@ -21,7 +21,7 @@
   :author "Florian Patzl"
   :licence "GPL3"
   :serial t
-  :depends-on (pathnames unix-options)
+  :depends-on (unix-options) ; TODO depending on uiop did not work?
   :components ((:file "tree")
 	       (:file "cmdline"))
   :entry-point "com.github.flpa.cl-tree.cmdline:tree-cmd")

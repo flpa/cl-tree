@@ -16,9 +16,11 @@
 (in-package :cl-user)
 (defpackage :com.github.flpa.cl-tree
   (:use :common-lisp)
-  (:import-from :com.gigamonkeys.pathnames
+  (:import-from :uiop/pathname
 		:directory-pathname-p
-		:list-directory)
+		:hidden-pathname-p)
+  (:import-from :uiop/filesystem
+		:directory-files)
   (:export :tree
 	   :base-name
 	   :remove-leading-dots
@@ -57,7 +59,7 @@
 					 (append `(,*line-straight*) prefixes)
 					 `(,*line-middle*)))
 		       (children (sort-with-hidden
-				  (filter-pathnames (list-directory name) predicates))))
+				  (filter-pathnames (directory-files name) predicates))))
 		   (when children
 		     (dolist (x (butlast children)) (walk x new-prefixes))
 		     (walk (car (last children))
@@ -76,7 +78,7 @@
 
 ;; TODO: macro of better readability of parameter<>predicate mapping?
 (defun build-predicates (show-hidden directories-only prune-empty)
-  (loop for x in `((,(not show-hidden) ,#'not-hidden-p)
+  (loop for x in `((,(not show-hidden) ,#'visible-p)
 		   (,directories-only ,#'directory-pathname-p)
 		   (,prune-empty ,#'file-or-non-empty-dir-p))
      if (car x) collect (cadr x)))
@@ -113,11 +115,11 @@
 ;;;; Predicates
 ;;;; ---------------
 
-(defun not-hidden-p (pathname)
+(defun visible-p (pathname)
   (not (char-equal #\.
 		   (aref (base-name pathname) 0))))
 
 (defun file-or-non-empty-dir-p (pathname)
   (if (directory-pathname-p pathname)
-      (list-directory pathname)
+      (directory-files pathname) ; TODO: is it ok to return the list?
       t))

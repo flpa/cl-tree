@@ -7,6 +7,8 @@
       | -I pattern    | Do not list those files that match the wild-card pattern.                                                                                                                                                                                                                                                                                                                                                                                                                              |
       | --filelimit # | Do not descend directories that contain more than # entries.                                                                                                                                                                                                                                                                                                                                                                                                                           |
       | -o filename   | Send output to filename.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+      
+  note: uiop has  (uiop/filesystem:resolve-symlinks 
 
 * Topics
 ** Google CL guide says UIOP simplifies pathname handling?

@@ -1,3 +1,4 @@
+#! /usr/bin/sbcl --script
 ;;;; cl-tree: Reimplementing Unix 'tree' command in Common Lisp
 ;;;; Copyright (C) 2015 Florian Patzl 
 ;;;;

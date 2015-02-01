@@ -14,12 +14,16 @@
 ;;;; -----------------------------------------------------------------------------------------------
 
 (in-package :cl-user)
-(defpackage :com.github.flpa.cl-tree.test
+(defpackage #:com.github.flpa.cl-tree.test
   (:use :common-lisp
 	:com.github.flpa.cl-tree
 	:5am)
   (:import-from :com.github.flpa.cl-tree
-		::visible-p))
+		::visible-p
+		::base-name
+		::remove-leading-dots
+		::sort-with-hidden
+		::filter-pathnames))
 
 (in-package :com.github.flpa.cl-tree.test)
 

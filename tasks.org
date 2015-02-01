@@ -8,10 +8,17 @@
       | --filelimit # | Do not descend directories that contain more than # entries.                                                                                                                                                                                                                                                                                                                                                                                                                           |
       | -o filename   | Send output to filename.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
       
-  note: uiop has  (uiop/filesystem:resolve-symlinks 
+  note: uiop has  (uiop/filesystem:resolve-symlinks)
 
 * Topics
-** Google CL guide says UIOP simplifies pathname handling?
 ** use import-from instead of :use
 ** explicit dir: tree a prints a, tree . prints ., tree ../xy prints ../xy as root and so on
 ** License clashes with other libs?
+* TODOs
+** TODO real tree sorts case-insensitive
+** TODO changelog
+** TODO ease running tests
+** TODO measure code coverage
+** TODO travis CI
+** TODO are 5am tests global really global scoped? might cause problems
+** TODO redefine package exports? how?

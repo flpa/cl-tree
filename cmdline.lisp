@@ -14,7 +14,7 @@
 ;;;; -----------------------------------------------------------------------------------------------
 
 (in-package :cl-user)
-(defpackage :com.github.flpa.cl-tree.cmdline
+(defpackage #:com.github.flpa.cl-tree.cmdline
   (:use :common-lisp
 	:com.github.flpa.cl-tree
 	:unix-options)

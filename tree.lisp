@@ -14,18 +14,14 @@
 ;;;; -----------------------------------------------------------------------------------------------
 
 (in-package :cl-user)
-(defpackage :com.github.flpa.cl-tree
+(defpackage #:com.github.flpa.cl-tree
   (:use :common-lisp)
   (:import-from :uiop/pathname
 		:directory-pathname-p
 		:hidden-pathname-p)
   (:import-from :uiop/filesystem
 		:directory-files)
-  (:export :tree
-	   :base-name
-	   :remove-leading-dots
-	   :sort-with-hidden
-	   :filter-pathnames))
+  (:export :tree))
 
 (in-package :com.github.flpa.cl-tree)
 

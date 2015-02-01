@@ -119,15 +119,3 @@
   (is-true (visible-p #P"/tmp/")))
 (test hidden-directory
   (is-false (visible-p #P"/tmp/.git/")))
-
-
-(def-suite test-base-name :in all)
-(in-suite test-base-name)
-
-(macrolet ((fn (desc in out)
-	     `(test ,desc
-		(is (equal ,out (base-name (pathname ,in)))))))
-  (fn toplevel-directory "/tmp/" "tmp")
-  (fn nested-directory "/tmp/a/b/" "b")
-  (fn file "/tmp/main" "main")
-  (fn file-with-ext "/tmp/main.c" "main.c"))

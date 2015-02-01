@@ -20,21 +20,21 @@
   :version "0.0.2"
   :author "Florian Patzl"
   :licence "GPL3"
+  :depends-on (#:unix-options) ; TODO depending on uiop did not work?
   :serial t
-  :depends-on (unix-options) ; TODO depending on uiop did not work?
   :components ((:file "tree")
 	       (:file "cmdline"))
   :entry-point "com.github.flpa.cl-tree.cmdline:tree-cmd")
 
 (defsystem cl-tree/test
-  :depends-on (cl-tree fiveam)
-  :perform (test-op (o s)
-                    (uiop:symbol-call :fiveam  '#:run!
-                       (uiop:find-symbol* '#:all
-					  '#:com.github.flpa.cl-tree.test)))
   :description "Test system for cl-tree"
   :version "0.0.2"
   :author "Florian Patzl"
   :licence "GPL3"
+  :depends-on (#:cl-tree #:fiveam)
   :serial t
-  :components ((:file "tests")))
+  :components ((:file "tests"))
+  :perform (test-op (o s)
+                    (uiop:symbol-call :fiveam  '#:run!
+                       (uiop:find-symbol* '#:all
+					  '#:com.github.flpa.cl-tree.test))))

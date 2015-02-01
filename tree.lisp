@@ -85,8 +85,10 @@
 
 ;; TODO ... why do I need to do this?
 (defun base-name (p)
-  (or (and (directory-pathname-p p)
-	   (car (last (pathname-directory p))))
+  "Determines the base name of the `pathname' P, i.e. the directory name for directories or the file
+name, including the extension, for files."
+  (if (directory-pathname-p p)
+      (car (last (pathname-directory p)))
       (if (pathname-type p)
 	  (concatenate 'string (pathname-name p) "." (pathname-type p))
 	  (pathname-name p))))

@@ -22,3 +22,29 @@
 ** TODO travis CI
 ** TODO are 5am tests global really global scoped? might cause problems
 ** TODO redefine package exports? how?
+* Bugs
+** Incorrect line between directories on same line.
+#+BEGIN_SRC 
+$ cl-tree   
+.
+├── b
+│   └── c
+│   │   └── d
+├── dir
+│   └── file
+├── empty-dir
+└── hjk
+
+4 directories, 3 files
+$ tree
+.
+├── b
+│   └── c
+│       └── d
+├── dir
+│   └── file
+├── empty-dir
+└── hjk
+
+4 directories, 3 files
+#+END_SRC

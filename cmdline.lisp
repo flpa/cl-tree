@@ -18,6 +18,11 @@
   (:use :common-lisp
 	:com.github.flpa.cl-tree
 	:unix-options)
+  (:import-from :uiop/pathname
+		:merge-pathnames*
+		:ensure-directory-pathname)
+  (:import-from :uiop/os
+		:getcwd)
   (:export :tree-cmd))
 
 (in-package :com.github.flpa.cl-tree.cmdline)
@@ -28,7 +33,11 @@
 			noreport
 			prune
 			&free directories)
-    (tree (uiop/os:getcwd)
+    (tree (mapcar
+	   #'(lambda (dir)
+	       (merge-pathnames* (ensure-directory-pathname (pathname dir))
+				 (getcwd)))
+	   (if directories directories '("."))) 
 	  :show-hidden a
 	  :directories-only d
 	  :noreport noreport

@@ -33,24 +33,23 @@
 ;;;; Public API
 ;;;; ---------------
 
-(defun tree (root-dir &key (noreport nil)
-			(show-hidden nil)
-			(directories-only nil)
-			(prune-empty nil)
-			(dirs '()))
-  (let ((dircount -1) ; -1 to exclude root directory from count.
+;; TODO: not satisfied with the function signature
+(defun tree (dirs &key (noreport nil)
+		    (show-hidden nil)
+		    (directories-only nil)
+		    (prune-empty nil))
+  (let ((dircount 0)
 	(filecount 0)
 	(predicates (build-predicates show-hidden
 				      directories-only
 				      prune-empty)))
     (labels
 	((walk (name prefixes)
-	   (format t "~{~a~}~a~%"
-		   prefixes
-		   (if prefixes (base-name name) "."))
+	   (format t "~{~a~}~a~%" prefixes (base-name name))
 	   (if (directory-pathname-p name)
 	       (progn
-		 (incf dircount)
+		 (when prefixes ; Root directories are not counted 
+		   (incf dircount))
 		 (let ((new-prefixes (if prefixes
 					 (append `(,*line-straight*) prefixes)
 					 `(,*line-middle*)))
@@ -61,9 +60,9 @@
 		     (walk (car (last children))
 			   (append (butlast new-prefixes) `(,*line-end*))))))
 	       (incf filecount))))
-      (fresh-line)
-      ;; walk dirs, if no dirs use root-dir
-      (walk root-dir '())
+      (mapc #'(lambda (dir)
+		(fresh-line)
+		(walk dir '())) dirs)
       (unless noreport
 	(print-report dircount filecount))
       (fresh-line))))

@@ -100,6 +100,7 @@ name, including the extension, for files."
 	:key #'(lambda(x) (remove-leading-dots (base-name x)))))
 
 (defun remove-leading-dots (input)
+  "Removes any number of leading dots from the `string' INPUT."
   (string-left-trim (list #\.) input))
 
 (defun print-report (dircount filecount)
@@ -113,10 +114,13 @@ name, including the extension, for files."
 ;;;; ---------------
 
 (defun visible-p (pathname)
+  "Determines whether a given PATHNAME is visible, i.e. not hidden, by Unix conventions:
+   Hidden files and directories start with a dot (.)"
   (not (char-equal #\.
 		   (aref (base-name pathname) 0))))
 
 (defun file-or-non-empty-dir-p (pathname)
+  "Checks whether a given PATHNAME denotes a file or an empty directory."
   (if (directory-pathname-p pathname)
       (directory-files pathname) ; TODO: is it ok to return the list?
       t))

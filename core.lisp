@@ -14,7 +14,7 @@
 ;;;; -----------------------------------------------------------------------------------------------
 
 (in-package :cl-user)
-(defpackage #:com.github.flpa.cl-tree
+(defpackage #:com.github.flpa.cl-tree.core
   (:use :common-lisp)
   (:import-from :uiop/pathname
 		:directory-pathname-p
@@ -23,7 +23,7 @@
 		:directory-files)
   (:export :tree))
 
-(in-package :com.github.flpa.cl-tree)
+(in-package :com.github.flpa.cl-tree.core)
 
 (defparameter *line-middle* "├── ")
 (defparameter *line-straight* "│   ")
@@ -34,12 +34,14 @@
 ;;;; ---------------
 
 ;; TODO: not satisfied with the function signature
-(defun tree (dirs &key (noreport nil)
+(defun tree (directories &key (noreport nil)
 		    (show-hidden nil)
 		    (directories-only nil)
 		    (prune-empty nil))
-  (let ((dircount 0)
-	(filecount 0)
+  "TREE traverses a list of DIRECTORIES, printing their contents according to the specified 
+   parameters."
+  (let ((dircount 0)  ; TODO: Replacing this and filecount by parameters would ease breaking code
+	(filecount 0) ;       into multiple functions.
 	(predicates (build-predicates show-hidden
 				      directories-only
 				      prune-empty)))
@@ -61,8 +63,8 @@
 			   (append (butlast new-prefixes) `(,*line-end*))))))
 	       (incf filecount))))
       (mapc #'(lambda (dir)
-		(fresh-line)
-		(walk dir '())) dirs)
+		(fresh-line) ; TODO: necessary?
+		(walk dir '())) directories)
       (unless noreport
 	(print-report dircount filecount))
       (fresh-line))))
@@ -71,8 +73,8 @@
 ;;;; Internals
 ;;;; ---------------
 
-;; TODO: macro of better readability of parameter<>predicate mapping?
 (defun build-predicates (show-hidden directories-only prune-empty)
+  ;; TODO: macro of better readability of parameter<>predicate mapping?
   (loop for x in `((,(not show-hidden) ,#'visible-p)
 		   (,directories-only ,#'directory-pathname-p)
 		   (,prune-empty ,#'file-or-non-empty-dir-p))

@@ -15,8 +15,10 @@
 
 (in-package :cl-user)
 (defpackage #:com.github.flpa.cl-tree.cmdline
+  (:documentation "This package encapsulates interaction with the command-line.
+                   It parses arguments and passes them to the TREE core function.")
   (:use :common-lisp
-	:com.github.flpa.cl-tree
+	:com.github.flpa.cl-tree.core
 	:unix-options)
   (:import-from :uiop/pathname
 		:merge-pathnames*
@@ -28,17 +30,27 @@
 (in-package :com.github.flpa.cl-tree.cmdline)
 
 (defun tree-cmd ()
+  "TREE-CMD is the main command-line entry point."
   (with-cli-options () (a
 			d
 			noreport
 			prune
 			&free directories)
-    (tree (mapcar
-	   #'(lambda (dir)
-	       (merge-pathnames* (ensure-directory-pathname (pathname dir))
-				 (getcwd)))
-	   (if directories directories '("."))) 
+    (tree (collect-directory-pathnames directories)
 	  :show-hidden a
 	  :directories-only d
 	  :noreport noreport
 	  :prune-empty prune)))
+
+(defun collect-directory-pathnames (paths)
+  "Collects the complete pathnames for a list of PATHS specified as strings.
+   That means that relative paths are merged with the current working directory path, while
+   absolute paths remaing untouched.
+   In case the list of PATHS is empty, the current working directory pathname is returned, merged
+   with \".\" to achieve the output of the original tree command."
+  (mapcar
+	   #'(lambda (dir)
+	       (merge-pathnames* (ensure-directory-pathname (pathname dir))
+				 (getcwd)))
+	   (if paths paths '("."))))
+

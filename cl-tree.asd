@@ -22,7 +22,7 @@
   :licence "GPL3"
   :depends-on (#:unix-options) ; TODO depending on uiop did not work?
   :serial t
-  :components ((:file "tree")
+  :components ((:file "core")
 	       (:file "cmdline"))
   :entry-point "com.github.flpa.cl-tree.cmdline:tree-cmd")
 
@@ -33,8 +33,10 @@
   :licence "GPL3"
   :depends-on (#:cl-tree #:fiveam)
   :serial t
-  :components ((:file "tests"))
+  :components ((:file "test/suites")
+	       (:file "test/core")
+	       (:file "test/cmdline"))
   :perform (test-op (o s)
                     (uiop:symbol-call :fiveam  '#:run!
                        (uiop:find-symbol* '#:all
-					  '#:com.github.flpa.cl-tree.test))))
+					  '#:com.github.flpa.cl-tree.test.suites))))

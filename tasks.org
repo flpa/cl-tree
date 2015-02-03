@@ -11,9 +11,12 @@
   note: uiop has  (uiop/filesystem:resolve-symlinks)
 
 * Topics
-** use import-from instead of :use
 ** explicit dir: tree a prints a, tree . prints ., tree ../xy prints ../xy as root and so on
+*** relative paths are printed relative, absolute absolute. Maybe this means tree needs to take
+    care of building paths?
 ** License clashes with other libs?
+** performance measuring
+** full tests: simple syntax for creating test file structures?
 * TODOs
 ** TODO real tree sorts case-insensitive
 ** TODO changelog
@@ -22,6 +25,8 @@
 ** TODO travis CI
 ** TODO are 5am tests global really global scoped? might cause problems
 ** TODO redefine package exports? how?
+** TODO revert line length?
+** TODO turn change-file-header into lisp
 * Bugs
 ** Incorrect line between directories on same line.
 #+BEGIN_SRC 

@@ -17,20 +17,46 @@
 (defpackage #:com.github.flpa.cl-tree.util
   (:use :common-lisp)
   (:import-from :uiop/stream
-		:temporary-directory)
+                :temporary-directory)
   (:import-from :uiop/filesystem
-		:delete-directory-tree))
+                :delete-directory-tree)
+  (:import-from :uiop/pathname
+                :merge-pathnames*
+                :ensure-directory-pathname)
+  (:export :with-temporary-directory))
 
 (in-package :com.github.flpa.cl-tree.util)
 
 ;; TODO: contribute
 (defmacro with-temporary-directory (&body body)
   `(let ((directory
-	  (ensure-directories-exist
-	   (merge-pathnames (pathname (format nil "lisp~36R/" (random (ash 1 32))))
-			    (temporary-directory)))))
+           (ensure-directories-exist
+             (merge-pathnames (pathname (format nil "lisp~36R/" (random (ash 1 32))))
+                              (temporary-directory)))))
      (unwind-protect
-	  (progn
-	    ,@body)
+       (progn
+         ,@body)
        (delete-directory-tree directory :validate t))))
 
+;;; Drafts for a compact DSL for creating test file-structures.
+
+;; drafting syntax for convenient file structure creation
+;(:a (:b (:file "hallo") (:.hidden "test")))
+
+(defstruct simple-file name content)
+(defstruct simple-directory name sub-directories files)
+
+(defun create-file (file dir-pathname)
+  (with-open-file (s (merge-pathnames (pathname (simple-file-name file)) dir-pathname )
+                     :if-does-not-exist :create 
+                     :direction :output
+                     :if-exists :supersede)
+    (write-line (simple-file-content file) s)))
+
+(defun create-directory (directory root-dir-pathname)
+  (let ((own-pathname (ensure-directory-pathname 
+                        (merge-pathnames (pathname (simple-directory-name directory)) 
+                                         root-dir-pathname))))
+   (ensure-directories-exist own-pathname)
+   (mapc #'(lambda (file) (create-file file own-pathname)) (simple-directory-files directory))
+   (mapc #'(lambda (sub-directory) (create-directory sub-directory own-pathname)) (simple-directory-sub-directories directory))))

@@ -25,9 +25,9 @@
 
 (in-package :com.github.flpa.cl-tree.core)
 
-(defparameter *line-middle* "├── ")
+(defparameter *line-middle*   "├── ")
 (defparameter *line-straight* "│   ")
-(defparameter *line-end* "└── ")
+(defparameter *line-end*      "└── ")
 
 ;;;; ---------------
 ;;;; Public API
@@ -38,8 +38,8 @@
 		    (show-hidden nil)
 		    (directories-only nil)
 		    (prune-empty nil))
-  "TREE traverses a list of DIRECTORIES, printing their contents according to the specified 
-   parameters."
+  "TREE traverses a list of DIRECTORIES, represented as pathnames, while printing their contents 
+   according to the specified parameters."
   (let ((dircount 0)  ; TODO: Replacing this and filecount by parameters would ease breaking code
 	(filecount 0) ;       into multiple functions.
 	(predicates (build-predicates show-hidden
@@ -74,7 +74,9 @@
 ;;;; ---------------
 
 (defun build-predicates (show-hidden directories-only prune-empty)
-  ;; TODO: macro of better readability of parameter<>predicate mapping?
+  "Builds a list of predicates to be applied to every folder and file based on the parameter.
+   This effectively defines the mapping between parameters and predicate-functions."
+  ;; TODO: macro for better readability of parameter<>predicate mapping?
   (loop for x in `((,(not show-hidden) ,#'visible-p)
 		   (,directories-only ,#'directory-pathname-p)
 		   (,prune-empty ,#'file-or-non-empty-dir-p))
@@ -110,10 +112,6 @@ name, including the extension, for files."
   e.g.: '5 directories, 1 file'.
   Output is preceded by a blank line."
   (format t "~&~%~a director~:@P, ~a file~:P" dircount filecount))
-
-;;;; ---------------
-;;;; Predicates
-;;;; ---------------
 
 (defun visible-p (pathname)
   "Determines whether a given PATHNAME is visible, i.e. not hidden, by Unix conventions:

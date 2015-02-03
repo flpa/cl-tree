@@ -24,7 +24,11 @@
 		::remove-leading-dots
 		::sort-with-hidden
 		::filter-pathnames
-                ::print-report))
+                ::print-report
+                ::build-predicates
+                ::file-or-non-empty-dir-p)
+  (:import-from :uiop/pathname
+		:directory-pathname-p))
 
 (in-package :com.github.flpa.cl-tree.test.core)
 
@@ -109,3 +113,18 @@
   (is-true (visible-p #P"/tmp/")))
 (test hidden-directory
   (is-false (visible-p #P"/tmp/.git/")))
+
+(def-suite test-build-predicates :in core)
+(in-suite test-build-predicates)
+
+;; TODO: This test is hard to read and will need adaptions whenever a new parameter is added.
+;;       Is there a better way?
+(macrolet ((fn (desc (show-hidden directories-only prune-empty) out)
+	     `(test ,desc 
+		(is-false (set-difference ,out (build-predicates ,show-hidden 
+                                                                 ,directories-only 
+                                                                 ,prune-empty))))))
+  (fn no-params-only-hidden-filtered (nil nil nil) (list #'visible-p))
+  (fn with-hidden-no-predicates (t nil nil) '()) 
+  (fn directories-only (t t nil) (list #'directory-pathname-p)) 
+  (fn prune-empty (t nil t) (list #'file-or-non-empty-dir-p)))

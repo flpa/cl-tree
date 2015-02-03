@@ -23,7 +23,8 @@
   :depends-on (#:unix-options) ; TODO depending on uiop did not work?
   :serial t
   :components ((:file "core")
-	       (:file "cmdline"))
+	       (:file "cmdline")
+	       (:file "util"))
   :entry-point "com.github.flpa.cl-tree.cmdline:tree-cmd")
 
 (defsystem cl-tree/test
@@ -35,7 +36,8 @@
   :serial t
   :components ((:file "test/suites")
 	       (:file "test/core")
-	       (:file "test/cmdline"))
+	       (:file "test/cmdline")
+	       (:file "test/util"))
   :perform (test-op (o s)
                     (uiop:symbol-call :fiveam  '#:run!
                        (uiop:find-symbol* '#:all

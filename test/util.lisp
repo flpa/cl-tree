@@ -39,7 +39,7 @@
 (def-suite test-create-file :in util)
 (in-suite test-create-file)
 
-(test basic-test
+(test creates-and-writes-content
   (create-file (make-simple-file :name "testfile.txt" :content "content") (temporary-directory))
   (is (equal "content" 
              (with-open-file (s (merge-pathnames (pathname "testfile.txt") (temporary-directory)))
@@ -48,7 +48,7 @@
 (def-suite test-create-directory :in util)
 (in-suite test-create-directory)
 
-(test basic-test2
+(test creates-dirs-and-files
   (with-temporary-directory 
     (create-directory 
       (make-simple-directory :name "a" 
@@ -60,5 +60,5 @@
                                                                      :name "d" 
                                                                      :content "e"))))) directory)
     (is-true (directory-exists-p (merge-pathnames #P"a/b/" directory)))
-    ;; only testing existence here
+    ;; only testing existence here since content is covered in specific tests for create-file
     (is-true (file-exists-p (merge-pathnames #P"a/c/d" directory)))))

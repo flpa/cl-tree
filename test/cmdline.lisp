@@ -30,7 +30,6 @@
 (def-suite test-collect-directory-pathnames :in cmdline)
 (in-suite test-collect-directory-pathnames)
 
-;; this is the correct is equal order! check others
 ;; TODO: consistency for macro param naming! out vs expected 
 (macrolet ((fn (desc in out)
              `(test ,desc

@@ -37,7 +37,7 @@
 
 (macrolet ((fn (desc in out)
 	     `(test ,desc
-		(is (equal (base-name (pathname ,in)) ,out)))))
+		(is (equal ,out (base-name (pathname ,in)))))))
   (fn single-dir "/home/" "home")
   (fn two-dirs "/home/dir/" "dir")
   (fn many-dirs "/home/is/great/and/a/dir/" "dir")
@@ -50,7 +50,7 @@
 
 (macrolet ((fn (desc in out)
 	     `(test ,desc
-		(is (equal (remove-leading-dots ,in) ,out)))))
+		(is (equal ,out (remove-leading-dots ,in))))))
   (fn no-ext "plain" "plain")
   (fn with-ext "main.c" "main.c")
   (fn hidden-no-ext ".hidden" "hidden")

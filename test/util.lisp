@@ -32,7 +32,10 @@
 
 (in-package :com.github.flpa.cl-tree.test.util)
 
-;;; See suites.lisp
+;;; ---------------------------------------------
+;;; See suites.lisp for explanations of the
+;;; approach used in these tests.
+;;; ---------------------------------------------
 
 (def-suite util :in all)
 

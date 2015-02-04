@@ -25,16 +25,21 @@
 
 (in-package :com.github.flpa.cl-tree.test.cmdline)
 
+;;; ---------------------------------------------
+;;; See suites.lisp for explanations of the
+;;; approach used in these tests.
+;;; ---------------------------------------------
+
 (def-suite cmdline :in all)
 
 (def-suite test-collect-directory-pathnames :in cmdline)
 (in-suite test-collect-directory-pathnames)
 
-;; TODO: consistency for macro param naming! out vs expected 
-(macrolet ((fn (desc in out)
+(macrolet ((fn (desc in expected)
              `(test ,desc
+                    ;; TODO: nope, not on other platforms
                     (chdir #P"/tmp/") ; tests use /tmp/ as current working directory
-                    (is (equal (mapcar #'pathname ,out) 
+                    (is (equal (mapcar #'pathname ,expected) 
                                (collect-directory-pathnames ,in))))))
   (fn no-dirs-returns-cwd '() '("/tmp/./"))
   (fn relative-dir-merges-cwd '("folder/") '("/tmp/folder/"))

@@ -32,16 +32,19 @@
 
 (in-package :com.github.flpa.cl-tree.test.core)
 
-;;; See suites.lisp
+;;; ---------------------------------------------
+;;; See suites.lisp for explanations of the
+;;; approach used in these tests.
+;;; ---------------------------------------------
 
 (def-suite core :in all)
 
 (def-suite test-base-name :in core)
 (in-suite test-base-name)
 
-(macrolet ((fn (desc in out)
+(macrolet ((fn (desc in expected)
 	     `(test ,desc
-		(is (equal ,out (base-name (pathname ,in)))))))
+		(is (equal ,expected (base-name (pathname ,in)))))))
   (fn single-dir "/home/" "home")
   (fn two-dirs "/home/dir/" "dir")
   (fn many-dirs "/home/is/great/and/a/dir/" "dir")
@@ -52,9 +55,9 @@
 (def-suite test-remove-leading-dots :in core)
 (in-suite test-remove-leading-dots)
 
-(macrolet ((fn (desc in out)
+(macrolet ((fn (desc in expected)
 	     `(test ,desc
-		(is (equal ,out (remove-leading-dots ,in))))))
+		(is (equal ,expected (remove-leading-dots ,in))))))
   (fn no-ext "plain" "plain")
   (fn with-ext "main.c" "main.c")
   (fn hidden-no-ext ".hidden" "hidden")
@@ -66,9 +69,9 @@
 (def-suite test-sort-with-hidden :in core)
 (in-suite test-sort-with-hidden)
 
-(macrolet ((fn (desc in out)
+(macrolet ((fn (desc in expected)
 	     `(test ,desc
-		(is (equal ,out (sort-with-hidden ,in))))))
+		(is (equal ,expected (sort-with-hidden ,in))))))
   (fn no-hidden '("c" "a" "b") '("a" "b" "c"))
   (fn single-hidden '("c" "a" ".b") '("a" ".b" "c"))
   (fn multiple-hidden '("alpha" ".aha" ".arm") '(".aha" "alpha" ".arm")))
@@ -80,9 +83,9 @@
 ;;       all of his working, maybe that'd need 'eval-when'?
 (defparameter *numbers-0to5* (loop for i from 0 to 5 collect i))
 
-(macrolet ((fn (desc predicates out)
+(macrolet ((fn (desc predicates expected)
 	     `(test ,desc
-		(is (equal ,out (filter-pathnames *numbers-0to5* ,predicates))))))
+		(is (equal ,expected (filter-pathnames *numbers-0to5* ,predicates))))))
   (fn filter-even (list #'evenp) '(0 2 4))
   (fn filter-even-greater-zero (list #'evenp #'(lambda (x) (> x 0))) '(2 4))
   (fn no-predicates '() *numbers-0to5*))
@@ -90,17 +93,14 @@
 (def-suite test-print-report :in core)
 (in-suite test-print-report)
 
-(macrolet ((fn (desc dircount filecount out)
+(macrolet ((fn (desc dircount filecount expected)
 	     `(test ,desc
-		(is (equal ,out
+		(is (equal (format nil "~%~A" ,expected)
 			   (with-output-to-string (*standard-output*)
 			     (print-report ,dircount ,filecount)))))))
-  (fn 3dirs-2files 3 2 "
-3 directories, 2 files")
-  (fn 1dir-1file 1 1 "
-1 directory, 1 file")
-  (fn 0dirs-0files 0 0 "
-0 directories, 0 files"))
+  (fn 3dirs-2files 3 2 "3 directories, 2 files")
+  (fn 1dir-1file 1 1 "1 directory, 1 file")
+  (fn 0dirs-0files 0 0 "0 directories, 0 files"))
 
 (def-suite test-visible-p :in core)
 (in-suite test-visible-p)
@@ -119,9 +119,9 @@
 
 ;; TODO: This test is hard to read and will need adaptions whenever a new parameter is added.
 ;;       Is there a better way?
-(macrolet ((fn (desc (show-hidden directories-only prune-empty) out)
+(macrolet ((fn (desc (show-hidden directories-only prune-empty) expected)
 	     `(test ,desc 
-		(is-false (set-difference ,out (build-predicates ,show-hidden 
+		(is-false (set-difference ,expected (build-predicates ,show-hidden 
                                                                  ,directories-only 
                                                                  ,prune-empty))))))
   (fn no-params-only-hidden-filtered (nil nil nil) (list #'visible-p))

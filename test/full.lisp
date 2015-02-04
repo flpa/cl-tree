@@ -34,7 +34,10 @@
 
 (in-package :com.github.flpa.cl-tree.test.full)
 
-;;; See suites.lisp
+;;; ---------------------------------------------
+;;; See suites.lisp for explanations of the
+;;; approach used in these tests.
+;;; ---------------------------------------------
 
 (def-suite util :in all)
 
@@ -74,35 +77,36 @@
                                                                      :name "file.lisp" 
                                                                      :content "nil"))))) directory)
     ;; no options
-    (is (equal ".
-└── root
-│   └── DEPS
-│   └── dir-empty
-│   └── dir-withfiles
-│   │   └── file.lisp
-│   └── the-file
-
-3 directories, 3 files
-"
+    (is (equal (format nil ".~@
+                            └── root~@
+                            │   └── DEPS~@
+                            │   └── dir-empty~@
+                            │   └── dir-withfiles~@
+                            │   │   └── file.lisp~@
+                            │   └── the-file~@
+                            ~@
+                            3 directories, 3 files~@
+                            "
+                       )
                (with-output-to-string (*standard-output*) (tree (list (merge-pathnames "./" directory))))))
     ;;directories only
-    (is (equal ".
-└── root
-│   └── dir-empty
-│   └── dir-withfiles
-
-3 directories, 0 files
-"
+    (is (equal (format nil ".~@
+                            └── root~@
+                            │   └── dir-empty~@
+                            │   └── dir-withfiles~@
+                            ~@
+                            3 directories, 0 files~@
+                            ")
                (with-output-to-string (*standard-output*) (tree (list (merge-pathnames "./" directory))
                                                                 :directories-only t))))
-    ;; noreport
-    (is (equal ".
-└── root
-│   └── DEPS
-│   └── dir-empty
-│   └── dir-withfiles
-│   │   └── file.lisp
-│   └── the-file
-"
-               (with-output-to-string (*standard-output*) (tree (list (merge-pathnames "./" directory))
-                                                                :noreport t))))))
+      ;; noreport
+      (is (equal (format nil ".~@
+                              └── root~@
+                              │   └── DEPS~@
+                              │   └── dir-empty~@
+                              │   └── dir-withfiles~@
+                              │   │   └── file.lisp~@
+                              │   └── the-file~@
+                              ")
+                 (with-output-to-string (*standard-output*) (tree (list (merge-pathnames "./" directory))
+                                                                  :noreport t))))))

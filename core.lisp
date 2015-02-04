@@ -40,33 +40,41 @@
 		    (prune-empty nil))
   "TREE traverses a list of DIRECTORIES, represented as pathnames, while printing their contents 
    according to the specified parameters."
-  (let ((dircount 0)  ; TODO: Replacing this and filecount by parameters would ease breaking code
-	(filecount 0) ;       into multiple functions.
-	(predicates (build-predicates show-hidden
+  (fresh-line) ; We always want to start on a fresh line.
+  (walk-tree 
+        directories 
+        '() 
+        (build-predicates show-hidden
 				      directories-only
-				      prune-empty)))
-    (labels
-	((walk (name prefixes)
-	   (format t "~{~a~}~a~%" prefixes (base-name name))
-	   (if (directory-pathname-p name)
-	       (progn
-		 (when prefixes ; Root directories are not counted 
-		   (incf dircount))
-		 (let ((new-prefixes (if prefixes
+				      prune-empty)
+        0
+        0
+        (not noreport)))
+
+(defun walk-tree (frontier prefixes predicates dircount filecount print-report)
+  "A recursive implementation of the tree functionality, inspired by depth-first-search as 
+   showcased in AIMA by Norvig.
+   FRONTIER is the LIFO list of pathnames elements to be handled, the list of PREDICATES controls
+   which elements are printed (and explored, in the case of directories). 
+   PREFIXES is the list of strings to be printed before the current file. DIRCOUNT and FILECOUNT
+   are numbers maintained for a final report, which is printed if PRINT-REPORT is true."
+  (if frontier
+    (let ((current (first frontier)))
+	   (format t "~{~a~}~a~%" prefixes (base-name current))
+           (if (directory-pathname-p current)
+             (walk-tree (append (sort-with-hidden
+				  (filter-pathnames (directory-files current) predicates))
+                                (rest frontier))
+                        (if prefixes
 					 (append `(,*line-straight*) prefixes)
-					 `(,*line-middle*)))
-		       (children (sort-with-hidden
-				  (filter-pathnames (directory-files name) predicates))))
-		   (when children
-		     (dolist (x (butlast children)) (walk x new-prefixes))
-		     (walk (car (last children))
-			   (append (butlast new-prefixes) `(,*line-end*))))))
-	       (incf filecount))))
-      (mapc #'(lambda (dir)
-		(fresh-line) ; TODO: necessary?
-		(walk dir '())) directories)
-      (unless noreport
-	(print-report dircount filecount))
+					 `(,*line-middle*))
+                        predicates
+                        (if prefixes (1+ dircount) dircount)
+                        filecount
+                        print-report)
+             (walk-tree (rest frontier) prefixes predicates dircount (1+ filecount) print-report)))
+    (when print-report
+      (print-report dircount filecount)
       (fresh-line))))
 
 ;;;; ---------------

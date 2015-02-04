@@ -51,7 +51,9 @@
 (in-suite test-create-directory)
 
 
-;;; Tests to capture the current status quo, hopefully useful during refactoring
+;;; These tests run some typical invocations of TREE and capture all output, comparing it to
+;;; the expected output. They're not supposed to provide full test coverage of the function but
+;;; are meant as a way to find changes that break the output in a fundamental way.
 
 (test full-tests
   (with-temporary-directory 
@@ -62,13 +64,45 @@
                                           (make-simple-file :name "the-file" :content "test"))
                              :sub-directories 
                              (list
-                               (make-simple-directory :name "empty")
-                               (make-simple-directory :name ".hidden-dir" 
+                               (make-simple-directory :name "dir-empty")
+                               (make-simple-directory :name ".dir-hidden" 
                                                       :files (list (make-simple-file 
                                                                      :name "nested" 
                                                                      :content "tested")))
-                               (make-simple-directory :name "withfiles" 
+                               (make-simple-directory :name "dir-withfiles" 
                                                       :files (list (make-simple-file 
                                                                      :name "file.lisp" 
                                                                      :content "nil"))))) directory)
-    (princ (with-output-to-string (*standard-output*) (tree (list (merge-pathnames "./" directory)))))))
+    ;; no options
+    (is (equal ".
+└── root
+│   └── DEPS
+│   └── dir-empty
+│   └── dir-withfiles
+│   │   └── file.lisp
+│   └── the-file
+
+3 directories, 3 files
+"
+               (with-output-to-string (*standard-output*) (tree (list (merge-pathnames "./" directory))))))
+    ;;directories only
+    (is (equal ".
+└── root
+│   └── dir-empty
+│   └── dir-withfiles
+
+3 directories, 0 files
+"
+               (with-output-to-string (*standard-output*) (tree (list (merge-pathnames "./" directory))
+                                                                :directories-only t))))
+    ;; noreport
+    (is (equal ".
+└── root
+│   └── DEPS
+│   └── dir-empty
+│   └── dir-withfiles
+│   │   └── file.lisp
+│   └── the-file
+"
+               (with-output-to-string (*standard-output*) (tree (list (merge-pathnames "./" directory))
+                                                                :noreport t))))))

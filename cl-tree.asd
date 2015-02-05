@@ -37,7 +37,8 @@
   :components ((:file "test/suites")
 	       (:file "test/core")
 	       (:file "test/cmdline")
-	       (:file "test/util"))
+	       (:file "test/util")
+	       (:file "test/full"))
   :perform (test-op (o s)
                     (uiop:symbol-call :fiveam  '#:run!
                        (uiop:find-symbol* '#:all

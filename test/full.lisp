@@ -79,9 +79,9 @@
     ;; no options
     (is (equal (format nil ".~@
                             └── root~@
-                            │   └── DEPS~@
-                            │   └── dir-empty~@
-                            │   └── dir-withfiles~@
+                            │   ├── DEPS~@
+                            │   ├── dir-empty~@
+                            │   ├── dir-withfiles~@
                             │   │   └── file.lisp~@
                             │   └── the-file~@
                             ~@
@@ -92,7 +92,7 @@
     ;;directories only
     (is (equal (format nil ".~@
                             └── root~@
-                            │   └── dir-empty~@
+                            │   ├── dir-empty~@
                             │   └── dir-withfiles~@
                             ~@
                             3 directories, 0 files~@
@@ -102,9 +102,9 @@
       ;; noreport
       (is (equal (format nil ".~@
                               └── root~@
-                              │   └── DEPS~@
-                              │   └── dir-empty~@
-                              │   └── dir-withfiles~@
+                              │   ├── DEPS~@
+                              │   ├── dir-empty~@
+                              │   ├── dir-withfiles~@
                               │   │   └── file.lisp~@
                               │   └── the-file~@
                               ")

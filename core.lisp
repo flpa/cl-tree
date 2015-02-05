@@ -51,6 +51,9 @@
     0
     (not noreport)))
 
+;; pros of flat list: convert to tail call recursion, direct passing of counts, convert to list
+;; cons: how to do things before and after folders? (indentation, xml?)
+
 (defun walk-tree (frontier prefixes predicates dircount filecount print-report)
   "A recursive implementation of the tree functionality, inspired by depth-first-search as 
    showcased in AIMA by Norvig.
@@ -60,21 +63,31 @@
    are numbers maintained for a final report, which is printed if PRINT-REPORT is true."
   (if frontier
     (let ((current (first frontier)))
-      (format t "~{~a~}~a~%" prefixes (base-name current))
-      (if (directory-pathname-p current)
-        (walk-tree (append (sort-with-hidden
-                             (filter-pathnames (directory-files current) predicates))
-                           (rest frontier))
-                   (if prefixes
-                     (append `(,*line-straight*) prefixes)
-                     `(,*line-middle*))
-                   predicates
-                   (if prefixes (1+ dircount) dircount)
-                   filecount
-                   print-report)
-        (walk-tree (rest frontier) prefixes predicates dircount (1+ filecount) print-report)))
-    (when print-report
-      (print-report dircount filecount)
+      (if (equal current :closedir) 
+        (walk-tree (rest frontier) (rest prefixes) predicates dircount filecount print-report)
+        (progn 
+          (format t "~{~a~}~a~%" 
+                  (if (equal :closedir (first (rest frontier)))
+                    (append (butlast prefixes) (list *line-end*)) 
+                    prefixes)
+                  (base-name current))
+          (if (directory-pathname-p current)
+            (walk-tree (append (sort-with-hidden
+                                 (filter-pathnames (directory-files current) predicates))
+                               (list :closedir)
+                               (rest frontier))
+                       (if prefixes
+                         ;; TODO: could be CONSed?
+                         (append `(,*line-straight*) prefixes)
+                         `(,*line-middle*))
+                       predicates
+                       (if prefixes (1+ dircount) dircount)
+                       filecount
+                       print-report)
+            (walk-tree (rest frontier) prefixes predicates dircount (1+ filecount) print-report)))))
+    (progn 
+      (when print-report
+        (print-report dircount filecount))
       (fresh-line))))
 
 ;;;; ---------------

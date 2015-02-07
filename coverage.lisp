@@ -23,3 +23,4 @@
 (sb-cover:report "/tmp/report/")
 
 (declaim (optimize (sb-cover:store-coverage-data 0)))
+(quit)

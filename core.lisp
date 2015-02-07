@@ -142,3 +142,11 @@
   (if (directory-pathname-p pathname)
     (not (endp (directory-files pathname)))
     t))
+;; improve with OR?
+
+(defun file-or-dir-within-limit-p (limit)
+  "Returns a predicate function that only accepts files, and directories with no more than LIMIT children."
+  (lambda (pathname)
+    (if (directory-pathname-p pathname) 
+      (<= (length (directory-files pathname)) limit)
+      t)))

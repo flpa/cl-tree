@@ -16,19 +16,20 @@
 (in-package :cl-user)
 (defpackage #:com.github.flpa.cl-tree.test.core
   (:use :common-lisp
-	:5am
+        :5am
         :com.github.flpa.cl-tree.test.suites)
   (:import-from :com.github.flpa.cl-tree.core
-		::visible-p
-		::base-name
-		::remove-leading-dots
-		::sort-with-hidden
-		::filter-items
+                ::visible-p
+                ::base-name
+                ::remove-leading-dots
+                ::sort-with-hidden
+                ::filter-items
                 ::print-report
                 ::build-predicates
-                ::file-or-non-empty-dir-p)
+                ::file-or-non-empty-dir-p
+                ::file-or-dir-within-limit-p)
   (:import-from :uiop/pathname
-		:directory-pathname-p)
+                :directory-pathname-p)
   (:import-from :com.github.flpa.cl-tree.util
                 :with-temporary-directory))
 
@@ -45,8 +46,8 @@
 (in-suite test-base-name)
 
 (macrolet ((fn (desc in expected)
-	     `(test ,desc
-		(is (equal ,expected (base-name (pathname ,in)))))))
+             `(test ,desc
+                (is (equal ,expected (base-name (pathname ,in)))))))
   (fn single-dir "/home/" "home")
   (fn two-dirs "/home/dir/" "dir")
   (fn many-dirs "/home/is/great/and/a/dir/" "dir")
@@ -58,8 +59,8 @@
 (in-suite test-remove-leading-dots)
 
 (macrolet ((fn (desc in expected)
-	     `(test ,desc
-		(is (equal ,expected (remove-leading-dots ,in))))))
+             `(test ,desc
+                (is (equal ,expected (remove-leading-dots ,in))))))
   (fn no-ext "plain" "plain")
   (fn with-ext "main.c" "main.c")
   (fn hidden-no-ext ".hidden" "hidden")
@@ -72,8 +73,8 @@
 (in-suite test-sort-with-hidden)
 
 (macrolet ((fn (desc in expected)
-	     `(test ,desc
-		(is (equal ,expected (sort-with-hidden ,in))))))
+             `(test ,desc
+                (is (equal ,expected (sort-with-hidden ,in))))))
   (fn no-hidden '("c" "a" "b") '("a" "b" "c"))
   (fn single-hidden '("c" "a" ".b") '("a" ".b" "c"))
   (fn multiple-hidden '("alpha" ".aha" ".arm") '(".aha" "alpha" ".arm"))
@@ -87,8 +88,8 @@
 (defparameter *numbers-0to5* (loop for i from 0 to 5 collect i))
 
 (macrolet ((fn (desc predicates expected)
-	     `(test ,desc
-		(is (equal ,expected (filter-items *numbers-0to5* ,predicates))))))
+             `(test ,desc
+                (is (equal ,expected (filter-items *numbers-0to5* ,predicates))))))
   (fn filter-even (list #'evenp) '(0 2 4))
   (fn filter-even-greater-zero (list #'evenp #'(lambda (x) (> x 0))) '(2 4))
   (fn no-predicates '() *numbers-0to5*))
@@ -97,10 +98,10 @@
 (in-suite test-print-report)
 
 (macrolet ((fn (desc dircount filecount expected)
-	     `(test ,desc
-		(is (equal (format nil "~%~A" ,expected)
-			   (with-output-to-string (*standard-output*)
-			     (print-report ,dircount ,filecount)))))))
+             `(test ,desc
+                (is (equal (format nil "~%~A" ,expected)
+                           (with-output-to-string (*standard-output*)
+                             (print-report ,dircount ,filecount)))))))
   (fn 3dirs-2files 3 2 "3 directories, 2 files")
   (fn 1dir-1file 1 1 "1 directory, 1 file")
   (fn 0dirs-0files 0 0 "0 directories, 0 files"))
@@ -131,16 +132,33 @@
     (is-false (file-or-non-empty-dir-p directory))))
 
 
+(def-suite test-file-or-dir-within-limit-p :in core)
+(in-suite test-file-or-dir-within-limit-p)
+;; could be refactored when files and dirs have separate predicates
+
+(test file
+  (is-true (funcall (file-or-dir-within-limit-p 1) #P"/tmp/a.c")))
+(test dir-in-limit
+  (with-temporary-directory 
+    (ensure-directories-exist (merge-pathnames #P"a/" directory))
+    (is-true (funcall (file-or-dir-within-limit-p 1) directory))))
+(test too-many-children
+  (with-temporary-directory 
+    (ensure-directories-exist (merge-pathnames #P"a/" directory))
+    (ensure-directories-exist (merge-pathnames #P"b/" directory))
+    (is-false (funcall (file-or-dir-within-limit-p 1) directory))))
+
+
 (def-suite test-build-predicates :in core)
 (in-suite test-build-predicates)
 
 ;; TODO: This test is hard to read and will need adaptions whenever a new parameter is added.
 ;;       Is there a better way?
 (macrolet ((fn (desc (show-hidden directories-only prune-empty) expected)
-	     `(test ,desc 
-		(is-false (set-difference ,expected (build-predicates ,show-hidden 
-                                                                 ,directories-only 
-                                                                 ,prune-empty))))))
+             `(test ,desc 
+                (is-false (set-difference ,expected (build-predicates ,show-hidden 
+                                                                      ,directories-only 
+                                                                      ,prune-empty))))))
   (fn no-params-only-hidden-filtered (nil nil nil) (list #'visible-p))
   (fn with-hidden-no-predicates (t nil nil) '()) 
   (fn directories-only (t t nil) (list #'directory-pathname-p)) 

@@ -16,6 +16,7 @@
     care of building paths?
 ** License clashes with other libs?
 ** performance measuring
+** mark pure functional and imperative
 ** full tests: simple syntax for creating test file structures?
 * TODOs
 ** TODO real tree sorts case-insensitive

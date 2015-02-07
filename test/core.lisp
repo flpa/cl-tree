@@ -28,7 +28,9 @@
                 ::build-predicates
                 ::file-or-non-empty-dir-p)
   (:import-from :uiop/pathname
-		:directory-pathname-p))
+		:directory-pathname-p)
+  (:import-from :com.github.flpa.cl-tree.util
+                :with-temporary-directory))
 
 (in-package :com.github.flpa.cl-tree.test.core)
 
@@ -113,6 +115,20 @@
   (is-true (visible-p #P"/tmp/")))
 (test hidden-directory
   (is-false (visible-p #P"/tmp/.git/")))
+
+(def-suite test-file-or-non-empty-dir-p :in core)
+(in-suite test-file-or-non-empty-dir-p)
+
+(test file
+  (is-true (file-or-non-empty-dir-p #P"/tmp/main.c")))
+(test non-empty-dir
+  (with-temporary-directory 
+    (ensure-directories-exist (merge-pathnames #P"a/" directory))
+    (is-true (file-or-non-empty-dir-p directory))))
+(test empty-dir
+  (with-temporary-directory 
+    (is-false (file-or-non-empty-dir-p directory))))
+
 
 (def-suite test-build-predicates :in core)
 (in-suite test-build-predicates)

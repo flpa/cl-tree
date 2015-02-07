@@ -76,10 +76,7 @@
                                  (filter-items (directory-files current) predicates))
                                (list :closedir)
                                (rest frontier))
-                       (if prefixes
-                         ;; TODO: could be CONSed?
-                         (append `(,*line-straight*) prefixes)
-                         `(,*line-middle*))
+                       (cons (if prefixes *line-straight* *line-middle*) prefixes)
                        predicates
                        (if prefixes (1+ dircount) dircount)
                        filecount

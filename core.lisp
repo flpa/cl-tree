@@ -143,5 +143,5 @@
 (defun file-or-non-empty-dir-p (pathname)
   "Checks whether a given PATHNAME denotes a file or an empty directory."
   (if (directory-pathname-p pathname)
-    (directory-files pathname) ; TODO: is it ok to return the list?
+    (not (endp (directory-files pathname)))
     t))

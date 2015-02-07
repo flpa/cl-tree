@@ -23,7 +23,7 @@
 		::base-name
 		::remove-leading-dots
 		::sort-with-hidden
-		::filter-pathnames
+		::filter-items
                 ::print-report
                 ::build-predicates
                 ::file-or-non-empty-dir-p)
@@ -79,8 +79,8 @@
   (fn multiple-hidden '("alpha" ".aha" ".arm") '(".aha" "alpha" ".arm"))
   (fn case-insensitive '("alpha" ".AHA" ".ARM") '(".AHA" "alpha" ".ARM")))
 
-(def-suite test-filter-pathnames :in core)
-(in-suite test-filter-pathnames)
+(def-suite test-filter-items :in core)
+(in-suite test-filter-items)
 
 ;; TODO: Could this global parameter cause problems? I couldn't get a 'let'-block surrounding
 ;;       all of his working, maybe that'd need 'eval-when'?
@@ -88,7 +88,7 @@
 
 (macrolet ((fn (desc predicates expected)
 	     `(test ,desc
-		(is (equal ,expected (filter-pathnames *numbers-0to5* ,predicates))))))
+		(is (equal ,expected (filter-items *numbers-0to5* ,predicates))))))
   (fn filter-even (list #'evenp) '(0 2 4))
   (fn filter-even-greater-zero (list #'evenp #'(lambda (x) (> x 0))) '(2 4))
   (fn no-predicates '() *numbers-0to5*))

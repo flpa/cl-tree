@@ -73,7 +73,7 @@
                   (base-name current))
           (if (directory-pathname-p current)
             (walk-tree (append (sort-with-hidden
-                                 (filter-pathnames (directory-files current) predicates))
+                                 (filter-items (directory-files current) predicates))
                                (list :closedir)
                                (rest frontier))
                        (if prefixes
@@ -113,11 +113,11 @@
       (concatenate 'string (pathname-name p) "." (pathname-type p))
       (pathname-name p))))
 
-;; TODO: actually rather generic?
-(defun filter-pathnames (pathnames predicates)
-  (remove-if-not #'(lambda (item)
-                     (every #'(lambda (p) (funcall p item)) predicates))
-                 pathnames))
+(defun filter-items (items predicates)
+  "Returns the filtered sequence of ITEMS that satisfy all of the sequence of PREDICATES."
+  (remove-if #'(lambda (item)
+                 (notevery #'(lambda (p) (funcall p item)) predicates))
+             items))
 
 (defun sort-with-hidden (pathnames)
   "Sorts a list of PATHNAMES, ignoring leading dots."

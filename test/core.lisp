@@ -76,7 +76,8 @@
 		(is (equal ,expected (sort-with-hidden ,in))))))
   (fn no-hidden '("c" "a" "b") '("a" "b" "c"))
   (fn single-hidden '("c" "a" ".b") '("a" ".b" "c"))
-  (fn multiple-hidden '("alpha" ".aha" ".arm") '(".aha" "alpha" ".arm")))
+  (fn multiple-hidden '("alpha" ".aha" ".arm") '(".aha" "alpha" ".arm"))
+  (fn case-insensitive '("alpha" ".AHA" ".ARM") '(".AHA" "alpha" ".ARM")))
 
 (def-suite test-filter-pathnames :in core)
 (in-suite test-filter-pathnames)

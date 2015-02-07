@@ -19,12 +19,11 @@
 ** mark pure functional and imperative
 ** full tests: simple syntax for creating test file structures?
 * TODOs
-** TODO real tree sorts case-insensitive
 ** TODO changelog
 ** TODO ease running tests
 ** TODO measure code coverage
 ** TODO travis CI
-** TODO are 5am tests global really global scoped? might cause problems
+** TODO are 5am tests really global scoped? might cause problems
 ** TODO redefine package exports? how?
 ** TODO revert line length?
 ** TODO turn change-file-header into lisp

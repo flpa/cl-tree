@@ -15,6 +15,8 @@
 *** relative paths are printed relative, absolute absolute. Maybe this means tree needs to take
     care of building paths?
 ** License clashes with other libs?
+*** fiveam: custom? but no redistribution?
+*** unix-options: LLGPL
 ** performance measuring
 ** mark pure functional and imperative
 ** full tests: simple syntax for creating test file structures?

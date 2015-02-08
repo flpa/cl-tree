@@ -93,6 +93,8 @@
 ;;;; Internals
 ;;;; ---------------
 
+;;; macros like 'def-directory-predicate', 'def-file-predicate', 'def-general-predicate' ?
+
 (defun build-predicates (show-hidden directories-only prune-empty &optional file-limit)
   "Builds a list of predicates to be applied to every folder and file based on the parameter.
    This effectively defines the mapping between parameters and predicate-functions."

@@ -37,7 +37,8 @@
 (defun tree (directories &key (noreport nil)
                          (show-hidden nil)
                          (directories-only nil)
-                         (prune-empty nil))
+                         (prune-empty nil)
+                         (file-limit nil))
   "TREE traverses a list of DIRECTORIES, represented as pathnames, while printing their contents 
    according to the specified parameters."
   (fresh-line) ; We always want to start on a fresh line.
@@ -46,7 +47,8 @@
     '() 
     (build-predicates show-hidden
                       directories-only
-                      prune-empty)
+                      prune-empty
+                      (when file-limit file-limit))
     0
     0
     (not noreport)))
@@ -73,7 +75,7 @@
                   (base-name current))
           (if (directory-pathname-p current)
             (walk-tree (append (sort-with-hidden
-                                 (filter-items (directory-files current) predicates))
+                                 (filter-pathnames (directory-files current) predicates))
                                (list :closedir)
                                (rest frontier))
                        (cons (if prefixes *line-straight* *line-middle*) prefixes)
@@ -91,14 +93,17 @@
 ;;;; Internals
 ;;;; ---------------
 
-(defun build-predicates (show-hidden directories-only prune-empty)
+(defun build-predicates (show-hidden directories-only prune-empty &optional file-limit)
   "Builds a list of predicates to be applied to every folder and file based on the parameter.
    This effectively defines the mapping between parameters and predicate-functions."
   ;; TODO: macro for better readability of parameter<>predicate mapping?
-  (loop for x in `((,(not show-hidden) ,#'visible-p)
-                   (,directories-only ,#'directory-pathname-p)
-                   (,prune-empty ,#'file-or-non-empty-dir-p))
-        if (car x) collect (cadr x)))
+  (loop for x in `((,(not show-hidden) t t ,#'visible-p)
+                   (,directories-only nil t ,(constantly nil))
+                   (,prune-empty t nil ,(complement #'empty-dir-p))
+                   (,file-limit t nil ,(dir-within-limit-p file-limit)))
+        if (and (first x) (second x)) collect (car (last x)) into dir-predicates
+        if (and (first x) (third x)) collect (car (last x)) into file-predicates
+        finally (return (list dir-predicates file-predicates))))
 
 ;; TODO ... why do I need to do this?
 (defun base-name (p)
@@ -110,6 +115,15 @@
       (concatenate 'string (pathname-name p) "." (pathname-type p))
       (pathname-name p))))
 
+(defun filter-pathnames (pathnames predicates)
+  "Returns the filtered sequence of PATHNAMES that satisfy all of the sequence of PREDICATES."
+  (remove-if #'(lambda (item)
+                 (notevery #'(lambda (p) (funcall p item)) (if (directory-pathname-p item) 
+                                                             (car predicates) 
+                                                             (cadr predicates))))
+             pathnames))
+
+;; TODO: no longer needed?
 (defun filter-items (items predicates)
   "Returns the filtered sequence of ITEMS that satisfy all of the sequence of PREDICATES."
   (remove-if #'(lambda (item)
@@ -117,7 +131,7 @@
              items))
 
 (defun sort-with-hidden (pathnames)
-  "Sorts a list of PATHNAMES, ignoring leading dots."
+  "Sorts a list of PATHNAMES, ignoring leading dots and case."
   (sort pathnames #'string-lessp
         :key #'(lambda(x) (remove-leading-dots (base-name x)))))
 
@@ -137,16 +151,14 @@
   (not (char-equal #\.
                    (aref (base-name pathname) 0))))
 
-(defun file-or-non-empty-dir-p (pathname)
-  "Checks whether a given PATHNAME denotes a file or an empty directory."
-  (if (directory-pathname-p pathname)
-    (not (endp (directory-files pathname)))
-    t))
-;; improve with OR?
+(defun empty-dir-p (pathname)
+  "Checks whether a given PATHNAME denotes an empty directory."
+  (endp (directory-files pathname)))
 
-(defun file-or-dir-within-limit-p (limit)
-  "Returns a predicate function that only accepts files, and directories with no more than LIMIT children."
+;; TODO actually not a predicate, misleading
+;; TODO actual tree does print directory but with msg like 
+;;      [200 entries exceeds filelimit, not opening dir] 
+(defun dir-within-limit-p (limit)
+  "Returns a predicate function that only directories with no more than LIMIT children."
   (lambda (pathname)
-    (if (directory-pathname-p pathname) 
-      (<= (length (directory-files pathname)) limit)
-      t)))
+    (<= (length (directory-files pathname)) limit)))

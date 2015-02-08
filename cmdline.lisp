@@ -35,12 +35,15 @@
 			d
 			noreport
 			prune
+                        &parameters
+                        filelimit
 			&free directories)
     (tree (collect-directory-pathnames directories)
 	  :show-hidden a
 	  :directories-only d
 	  :noreport noreport
-	  :prune-empty prune)))
+	  :prune-empty prune
+          :file-limit (when filelimit (parse-integer filelimit)))))
 
 (defun collect-directory-pathnames (paths)
   "Collects the complete pathnames for a list of PATHS specified as strings.
